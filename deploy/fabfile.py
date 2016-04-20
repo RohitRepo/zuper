@@ -12,8 +12,6 @@ def deploy():
     _get_latest_source(source_folder)
     _update_settings(source_folder, env.host)
     _update_virtualenv(source_folder)
-    _update_bower(source_folder)
-    _build_client(source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
     _restart_service()
@@ -53,7 +51,7 @@ def _update_virtualenv(source_folder):
     virtualenv_folder = source_folder + '/../virtualenv'
     if not exists(virtualenv_folder + '/bin/pip'):
         run('virtualenv %s --no-site-packages' % (virtualenv_folder,))
-    run('%s/bin/pip install -r %s/deploy_tools/requirements.txt' % (
+    run('%s/bin/pip install -r %s/deploy/requirements.txt' % (
         virtualenv_folder, source_folder))
 
 
