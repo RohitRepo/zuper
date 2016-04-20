@@ -1,5 +1,6 @@
 from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
+from django.shortcuts import get_object_or_404
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -15,14 +16,19 @@ from .serializers import UserSerializer, UserAddressSerializer
 @permission_classes((permissions.AllowAny,))
 def getOtp(request, format=None):
     phone = request.data.get('phone')
+    user_type = request.data.get('type')
 
     if not phone:
         # TODO better phone number validation
         return Response(status=status.HTTP_400_BAD_REQUEST)
 
+    if not (user_type == User.TYPE_AGENT):
+        user_type = User.TYPE_CUSTOMER
+
+
     # OTP generation logic
     otp = '1234'
-    user = User.objects.get_or_create_dummy(phone)
+    user = User.objects.get_or_create_dummy(phone, user_type)
     UserOtp.objects.create_or_update(user = user, otp=otp)
     return Response(data={'otp': '1234'}) 
 
@@ -53,7 +59,7 @@ def logout_user(request, format=None):
     Token.objects.get(user=request.user).delete()
     return Response()
 
-class UserMe(APIView):
+class UserMeDetail(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def put(self, request, format=None):
@@ -67,6 +73,15 @@ class UserMe(APIView):
 
     def get(self, request, format=None):
         serializer = UserSerializer(request.user)
+        return Response(data=serializer.data)
+
+class UserDetail(APIView):
+    # TODO Add permission for only super user to see this
+    permission_classes = (permissions.IsAuthenticated,)
+
+    def get(self, request, id, format=None):
+        user = get_object_or_404(user, id=id)
+        serializer = UserSerializer(user)
         return Response(data=serializer.data)
 
 class UserAddressList(APIView):

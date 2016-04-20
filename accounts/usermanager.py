@@ -37,14 +37,17 @@ class UserManager(BaseUserManager):
         '''
         return self.create_user_base(phone, name, password, True, True, **extra_fields)
 
-    def get_or_create_dummy(self, phone):
+    def get_or_create_dummy(self, phone, user_type=None):
         if not phone:
             return None;
+
+        if not user_type:
+            user_type = self.model.TYPE_CUSTOMER
 
         try:
             return self.get(phone=phone)
         except ObjectDoesNotExist:
-            return self.create_user(phone=phone, name="InactiveUser", is_active=False)
+            return self.create_user(phone=phone, name="InactiveUser", is_active=False, user_type=user_type)
 
 
 class UserOtpManager(BaseUserManager):

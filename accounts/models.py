@@ -9,12 +9,20 @@ from zuper.models import BaseModel
 from .usermanager import UserManager, UserOtpManager
 
 class User(AbstractBaseUser, PermissionsMixin):
+    TYPE_CUSTOMER = 'CU'
+    TYPE_AGENT = 'AG'
+
+    TYPE_CHOICES = (
+        ('TYPE_CUSTOMER', 'Customer'),
+        ('TYPE_AGENT', 'Agent'),
+    )
 
     name = models.CharField(max_length=80)
     email = models.EmailField(max_length=255, blank=True)
     phone = models.CharField(max_length=10, unique=True)
     is_active = models.BooleanField(default=True,)
     date_joined = models.DateTimeField(auto_now_add=True,)
+    user_type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=TYPE_CUSTOMER)
 
     objects = UserManager()
 
