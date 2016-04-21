@@ -42,7 +42,8 @@ SYSTEM_APPS = [
 ]
 
 USER_APPS = [
-    'accounts'
+    'accounts',
+    'orders',
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + USER_APPS

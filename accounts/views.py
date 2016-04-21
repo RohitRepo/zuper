@@ -1,4 +1,3 @@
-from django.shortcuts import render
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 
@@ -10,6 +9,8 @@ from rest_framework.views import APIView
 
 from .models import User, UserOtp, UserAddress
 from .serializers import UserSerializer, UserAddressSerializer
+
+from orders.serializers import OrderSerializer
 
 
 @api_view(['POST'])
@@ -107,3 +108,13 @@ class UserAddressList(APIView):
             return Response(data=serializer.data)
         except ObjectDoesNotExist:
             return Response(data={})
+
+
+# Relations from other apps
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def my_orders(request, format=None):
+    orders = request.user.orders
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)

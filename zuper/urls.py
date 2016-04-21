@@ -24,5 +24,6 @@ urlpatterns = [
 #API urls
 
 urlpatterns += [
-	url(r'^users', include('accounts.urls'))
+    url(r'^users', include('accounts.urls')),
+	url(r'^orders', include('orders.urls')),
 	]

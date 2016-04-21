@@ -13,8 +13,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     TYPE_AGENT = 'AG'
 
     TYPE_CHOICES = (
-        ('TYPE_CUSTOMER', 'Customer'),
-        ('TYPE_AGENT', 'Agent'),
+        (TYPE_CUSTOMER, 'Customer'),
+        (TYPE_AGENT, 'Agent'),
     )
 
     name = models.CharField(max_length=80)
@@ -57,6 +57,12 @@ class User(AbstractBaseUser, PermissionsMixin):
     	if not self.is_active:
     		self.is_active = True
     		self.save()
+
+    def is_customer(self):
+        return self.user_type == self.TYPE_CUSTOMER
+
+    def is_agent(self):
+        return self.user_type == self.TYPE_AGENT
 
 
 class UserOtp(BaseModel):
