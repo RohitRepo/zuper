@@ -8,8 +8,6 @@ class OrderSerializer(serializers.ModelSerializer):
         model = Order
         fields = ('id', 'description', 'order_type', 'estimate', 'status',
         	'source_lat', 'source_long', 'destination_lat', 'destination_long', 'cost_delivery', 'cost_purchase')
-        # read_only_fields = ('id', 'phone')
-        # write_only_fields = ('user_type', )
 
 class OrderStatusSerializer(serializers.ModelSerializer):
 

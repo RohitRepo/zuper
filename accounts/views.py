@@ -9,6 +9,7 @@ from rest_framework.views import APIView
 
 from .models import User, UserOtp, UserAddress
 from .serializers import UserSerializer, UserAddressSerializer
+from .sms import send_otp, generate_otp
 
 from orders.serializers import OrderSerializer
 
@@ -28,10 +29,11 @@ def getOtp(request, format=None):
 
 
     # OTP generation logic
-    otp = '1234'
+    otp = generate_otp()
+    send_otp(phone, otp)
     user = User.objects.get_or_create_dummy(phone, user_type)
     UserOtp.objects.create_or_update(user = user, otp=otp)
-    return Response(data={'otp': '1234'}) 
+    return Response() 
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
