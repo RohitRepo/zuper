@@ -65,5 +65,5 @@ def _update_database(source_folder):
         source_folder,))
 
 def _restart_service():
-    run('sudo stop canvasblues.com')
-    run('sudo start canvasblues.com')
+    run('sudo stop zuper')
+    run('sudo start zuper')
