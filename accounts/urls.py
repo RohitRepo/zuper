@@ -11,7 +11,7 @@ urlpatterns = [
 	url(r'^/me$', views.UserMeDetail.as_view(), name='user-me'),
 	url(r'^/me/orders$', views.my_orders, name='my-orders'),
 	url(r'^/me/address', views.UserAddressList.as_view(), name='user-address'),
-	url(r'^/(?P<id>[0-9]+)', views.UserDetail.as_view(), name='user-detail'),
+	url(r'^/address/(?P<id>[0-9]+)', views.UserDetail.as_view(), name='user-detail'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)

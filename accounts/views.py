@@ -10,6 +10,7 @@ from rest_framework.views import APIView
 from .models import User, UserOtp, UserAddress
 from .serializers import UserSerializer, UserAddressSerializer
 from .sms import send_otp, generate_otp
+from .permissions import HasAddress
 
 from orders.serializers import OrderSerializer
 
@@ -29,8 +30,9 @@ def getOtp(request, format=None):
 
 
     # OTP generation logic
-    otp = generate_otp()
-    send_otp(phone, otp)
+    # otp = generate_otp()
+    otp = '1234'
+    # send_otp(phone, otp)
     user = User.objects.get_or_create_dummy(phone, user_type)
     UserOtp.objects.create_or_update(user = user, otp=otp)
     return Response() 
@@ -91,11 +93,7 @@ class UserAddressList(APIView):
     permission_classes = (permissions.IsAuthenticated,)
 
     def post(self, request, format=None):
-        try:
-            address = request.user.useraddress
-            serializer = UserAddressSerializer(address, data=request.data)
-        except ObjectDoesNotExist:
-            serializer = UserAddressSerializer(data=request.data)
+        serializer = UserAddressSerializer(data=request.data)
 
         if serializer.is_valid():
             serializer.save(user=request.user)
@@ -105,11 +103,45 @@ class UserAddressList(APIView):
 
     def get(self, request, format=None):
         try:
-            address = request.user.useraddress
-            serializer = UserAddressSerializer(address)
+            addresses = request.user.addresses.all()
+            serializer = UserAddressSerializer(addresses, many=True)
             return Response(data=serializer.data)
         except ObjectDoesNotExist:
             return Response(data={})
+
+class UserAddressDetail(APIView):
+    permission_classes = (permissions.IsAuthenticated, HasAddress)
+
+    def put(self, request, id, format=None):
+        try:
+            address = request.user.addresses.get(id=id)
+            serializer = UserAddressSerializer(address, data=request.data)
+        except ObjectDoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        if serializer.is_valid():
+            serializer.save(user=request.user)
+            return Response(data=serializer.data)
+        else:
+            return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+    def get(self, request, id, format=None):
+        try:
+            address = request.user.addresses.get(id=id)
+            serializer = UserAddressSerializer(address, data=request.data)
+        except ObjectDoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response(serializer.data)
+
+    def delete(self, request, id, format=None):
+        try:
+            address = request.user.addresses.get(id=id)
+            address.delete()            
+        except ObjectDoesNotExist:
+            return Response(status=status.HTTP_404_NOT_FOUND)
+
+        return Response()
 
 
 # Relations from other apps
@@ -117,6 +149,10 @@ class UserAddressList(APIView):
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, ))
 def my_orders(request, format=None):
-    orders = request.user.orders
+    query = request.query_params.get('status')
+    if query:
+        orders = request.user.orders.filter(status=query)
+    else:
+        orders = request.user.orders
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)

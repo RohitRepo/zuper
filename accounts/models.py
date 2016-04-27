@@ -54,9 +54,9 @@ class User(AbstractBaseUser, PermissionsMixin):
         return self.name
 
     def activate(self):
-    	if not self.is_active:
-    		self.is_active = True
-    		self.save()
+        if not self.is_active:
+            self.is_active = True
+            self.save()
 
     def is_customer(self):
         return self.user_type == self.TYPE_CUSTOMER
@@ -66,13 +66,14 @@ class User(AbstractBaseUser, PermissionsMixin):
 
 
 class UserOtp(BaseModel):
-	otp = models.CharField(max_length=6)
-	user = models.OneToOneField(User)
+    otp = models.CharField(max_length=6)
+    user = models.OneToOneField(User)
 
-	objects = UserOtpManager()
+    objects = UserOtpManager()
 
 class UserAddress(BaseModel):
-	user = models.OneToOneField(User)
-	address = models.CharField(max_length=200)
-	latitude = models.CharField(max_length=15)
-	longitude = models.CharField(max_length=15)
+    user = models.ForeignKey(User, related_name="addresses")
+    tag = models.CharField(max_length=20, blank=True)
+    address = models.CharField(max_length=200)
+    latitude = models.CharField(max_length=15)
+    longitude = models.CharField(max_length=15)
