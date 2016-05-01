@@ -49,7 +49,7 @@ class OrderStatus(APIView):
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated, IsAgent))
 def pick_order(request, id, format=None):
-    order = get_object_or_404(order, id=id)
+    order = get_object_or_404(Order, id=id)
     order.agent = request.user
     order.status = Order.STATUS_ACCEPTED
     order.updated_by = request.user

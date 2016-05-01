@@ -8,7 +8,7 @@ urlpatterns = [
 	url(r'^$', views.OrderList.as_view(), name="order-list"),
 	url(r'^/(?P<id>[0-9]+)/status', views.OrderStatus.as_view(), name='order-status'),
 	url(r'^/(?P<id>[0-9]+)/pick', views.pick_order, name='order-pick'),
-	url(r'^/(?P<id>[0-9]+)/cost', views.pick_order, name='order-cost'),
+	url(r'^/(?P<id>[0-9]+)/cost', views.update_cost, name='order-cost'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
