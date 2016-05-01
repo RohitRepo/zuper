@@ -13,7 +13,7 @@ class IsAgent(permissions.BasePermission):
 class IsCreator(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        return request.user.id == obj.customer.id
+        return obj.is_owner(request.user)
 
 class IsCreatorOrAgent(permissions.BasePermission):
 
@@ -21,7 +21,7 @@ class IsCreatorOrAgent(permissions.BasePermission):
     	if request.user.is_agent:
     		return True
 
-        return request.user.id == obj.customer.id
+        return obj.is_owner(request.user)
 
 class CanUpdateStatus(permissions.BasePermission):
 
@@ -40,3 +40,16 @@ class IsCustomerOrReadOnly(permissions.BasePermission):
             return True
 
         return request.user.is_customer()
+
+class IsCreatorOrAssignedTo(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+
+        return obj.is_owner(request.user) or obj.is_assigned(request.user)
+
+class IsAssignedTo(permissions.BasePermission):
+
+    def has_object_permission(self, request, view, obj):
+
+        return obj.is_assigned(request.user)
+

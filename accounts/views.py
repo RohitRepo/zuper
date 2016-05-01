@@ -156,3 +156,29 @@ def my_orders(request, format=None):
         orders = request.user.orders
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def my_orders_open(request, format=None):
+    orders = request.user.orders.exclude(status=Order.STATUS_CANCELLED).exclude(status=Order.STATUS_COMPLETED)
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def my_orders_closed(request, format=None):
+    orders = request.user.orders.filter(status=Order.STATUS_CANCELLED).filter(status=Order.STATUS_COMPLETED)
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, ))
+def assigned_orders(request, format=None):
+    query = request.query_params.get('status')
+    if query:
+        orders = request.user.picks.filter(status=query)
+    else:
+        orders = request.user.picks
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)

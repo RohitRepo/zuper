@@ -48,3 +48,13 @@ class Order(BaseModel):
     agent = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="picks", blank=True, null=True)
     cost_delivery = models.IntegerField(blank=True, null=True)
     cost_purchase = models.IntegerField(blank=True, null=True)
+
+    def is_owner(self, user):
+        return user.id == self.customer.id
+
+    def is_assigned(self, user):
+
+        if not self.agent:
+            return False
+
+        return self.agent.id == user.id

@@ -10,7 +10,8 @@ from rest_framework.views import APIView
 
 from .models import Order
 from .serializers import OrderSerializer, OrderStatusSerializer, OrderCostSerializer
-from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent, CanUpdateStatus, IsCustomerOrReadOnly
+from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent
+from .permissions import CanUpdateStatus, IsCustomerOrReadOnly, IsCreatorOrAssignedTo, IsAssignedTo
 
 class OrderList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsCustomerOrReadOnly)
@@ -46,12 +47,33 @@ class OrderStatus(APIView):
         else:
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
+class OrderDetail(APIView):
+    permission_classes = (permissions.IsAuthenticated, IsCreatorOrAssignedTo)
+
+    def get(self, request, id, format=None):
+        order = get_object_or_404(Order, id=id)
+        serializer = OrderSerializer(order)
+        return Response(data=serializer.data)
+
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated, IsAgent))
 def pick_order(request, id, format=None):
     order = get_object_or_404(Order, id=id)
     order.agent = request.user
     order.status = Order.STATUS_ACCEPTED
+    order.updated_by = request.user
+    order.save()
+
+    serializer = OrderSerializer(order)
+    return Response(data=serializer.data)
+
+
+@api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated, IsAssignedTo))
+def unpick_order(request, id, format=None):
+    order = get_object_or_404(Order, id=id)
+    order.agent = None
+    order.status = Order.STATUS_PENDING
     order.updated_by = request.user
     order.save()
 
