@@ -1,5 +1,6 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -12,8 +13,8 @@ from .serializers import UserSerializer, UserAddressSerializer
 from .sms import send_otp, generate_otp
 from .permissions import HasAddress
 
+from orders.models import Order
 from orders.serializers import OrderSerializer
-
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -168,7 +169,7 @@ def my_orders_open(request, format=None):
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, ))
 def my_orders_closed(request, format=None):
-    orders = request.user.orders.filter(status=Order.STATUS_CANCELLED).filter(status=Order.STATUS_COMPLETED)
+    orders = request.user.orders.filter(Q(status=Order.STATUS_CANCELLED) | Q(status=Order.STATUS_COMPLETED))
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
 
@@ -179,6 +180,6 @@ def assigned_orders(request, format=None):
     if query:
         orders = request.user.picks.filter(status=query)
     else:
-        orders = request.user.picks
+        orders = request.user.picks.exclude(status=Order.STATUS_CANCELLED).exclude(status=Order.STATUS_COMPLETED)
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
