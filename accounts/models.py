@@ -23,6 +23,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     is_active = models.BooleanField(default=True,)
     date_joined = models.DateTimeField(auto_now_add=True,)
     user_type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=TYPE_CUSTOMER)
+    gcm_token = models.CharField(max_length=30, blank=True)
 
     objects = UserManager()
 

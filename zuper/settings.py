@@ -44,6 +44,7 @@ SYSTEM_APPS = [
 USER_APPS = [
     'accounts',
     'orders',
+    'notifications',
 ]
 
 INSTALLED_APPS = SYSTEM_APPS + USER_APPS

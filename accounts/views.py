@@ -9,10 +9,11 @@ from rest_framework.views import APIView
 
 from .models import User, UserOtp, UserAddress
 from .serializers import UserSerializer, UserAddressSerializer
-from .sms import send_otp, generate_otp
 from .permissions import HasAddress
 
 from orders.serializers import OrderSerializer
+from notifications.sms import generate_otp
+from notifications.tasks import send_otp_task
 
 
 @api_view(['POST'])
@@ -32,7 +33,7 @@ def getOtp(request, format=None):
     # OTP generation logic
     # otp = generate_otp()
     otp = '1234'
-    # send_otp(phone, otp)
+    # send_otp_task.delay(phone, otp)
     user = User.objects.get_or_create_dummy(phone, user_type)
     UserOtp.objects.create_or_update(user = user, otp=otp)
     return Response() 
@@ -182,3 +183,22 @@ def assigned_orders(request, format=None):
         orders = request.user.picks
     serializer = OrderSerializer(orders, many=True)
     return Response(serializer.data)
+
+class UpdateGCMToken(APIView):
+    permission_classes = (permissions.IsAuthenticated, )
+
+    def put(self, request, format=None):
+        user = request.user
+        gcm_token = request.data.get('gcm_token')
+
+        if gcm_token:
+            user.gcm_token = gcm_token
+            user.save()
+            return Response()
+        else:
+            return Response(data={'error', 'gcm_token is required'}, status=status.HTTP_400_BAD_REQUEST)
+
+    def delete(self, request, format=None):
+        request.user.gcm_token = ''
+        request.user.save()
+        return Response()

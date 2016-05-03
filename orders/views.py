@@ -13,6 +13,8 @@ from .serializers import OrderSerializer, OrderStatusSerializer, OrderCostSerial
 from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent
 from .permissions import CanUpdateStatus, IsCustomerOrReadOnly, IsCreatorOrAssignedTo, IsAssignedTo
 
+from notifications.tasks import order_status_gcm_task
+
 class OrderList(APIView):
     permission_classes = (permissions.IsAuthenticated, IsCustomerOrReadOnly)
 
@@ -41,7 +43,8 @@ class OrderStatus(APIView):
         serializer = OrderStatusSerializer(order, request.data)
 
         if serializer.is_valid():
-            serializer.save(updated_by=request.user)
+            order = serializer.save(updated_by=request.user)
+            order_status_gcm_task.delay(order, request.user)
             serializer = OrderSerializer(order)
             return Response(data=serializer.data)
         else:
