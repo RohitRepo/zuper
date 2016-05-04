@@ -21,6 +21,9 @@ def _create_directory_structure_if_necessary(site_folder):
     for subfolder in ('source', 'static', 'database', 'virtualenv', 'media', 'logs/celery'):
         run('mkdir -p %s/%s' % (site_folder, subfolder))
 
+    for file in ('logs/celery/celeryd.log', 'logs/celery/celeryd_err.log'):
+        run('touch %s/%s' % (site_folder, file))
+
 
 def _get_latest_source(source_folder):
     if exists(source_folder + '/.git'):
