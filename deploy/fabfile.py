@@ -18,10 +18,12 @@ def deploy():
 
 
 def _create_directory_structure_if_necessary(site_folder):
-    for subfolder in ('source', 'static', 'database', 'virtualenv', 'media', 'logs/celery'):
+    for subfolder in ('source', 'static', 'database', 'virtualenv', 'media',
+     'logs/celery', 'logs/pubsub'):
         run('mkdir -p %s/%s' % (site_folder, subfolder))
 
-    for file in ('logs/celery/celeryd.log', 'logs/celery/celeryd_err.log'):
+    for file in ('logs/celery/celeryd.log', 'logs/celery/celeryd_err.log',
+        'logs/pubsub/pubsub.log', 'logs/pubsub/pubsub_err.log'):
         run('touch %s/%s' % (site_folder, file))
 
 
