@@ -24,6 +24,8 @@ class User(AbstractBaseUser, PermissionsMixin):
     date_joined = models.DateTimeField(auto_now_add=True,)
     user_type = models.CharField(max_length=2, choices=TYPE_CHOICES, default=TYPE_CUSTOMER)
     gcm_token = models.CharField(max_length=30, blank=True)
+    latitude = models.CharField(max_length=15, blank=True)
+    longitude = models.CharField(max_length=15, blank=True)
 
     objects = UserManager()
 
@@ -64,6 +66,11 @@ class User(AbstractBaseUser, PermissionsMixin):
 
     def is_agent(self):
         return self.user_type == self.TYPE_AGENT
+
+    def update_location(self, latitude, longitude):
+        self.latitude = latitude
+        self.longitude = longitude
+        self.save()
 
 
 class UserOtp(BaseModel):
