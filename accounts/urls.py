@@ -19,6 +19,7 @@ urlpatterns = [
 urlpatterns += [
 	url(r'^/me/orders$', views.my_orders, name='my-orders'),
 	url(r'^/me/orders/open$', views.my_orders_open, name='my-orders-opn'),
+	url(r'^/me/orders/closed$', views.my_orders_closed, name='my-orders-opn'),
 	url(r'^/me/assigned$', views.assigned_orders, name='my-assigned_orders'),
 ]
 
