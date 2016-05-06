@@ -160,7 +160,7 @@ LOGGING = {
         'file': {
             'level': 'DEBUG',
             'class': 'logging.FileHandler',
-            'filename': '/home/zuperfast/site.log',
+            'filename': os.path.join(BASE_DIR, '../logs/site/logs'),
             'formatter': 'verbose'
         },
     },
