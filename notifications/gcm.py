@@ -1,9 +1,9 @@
-import requests
+import requests, json
 
 from orders.serializers import OrderSerializer
 
 url = 'https://gcm-http.googleapis.com/gcm/send'
-AUTHKEY = 'sdfsdfgsdfgsdf'
+AUTHKEY = 'AIzaSyD2NUwHvqbAlE-7IAqoEBu_YhV0HEjVJ_w'
 headers = {'Content-Type': 'application/json', 'Authorization': 'key='+AUTHKEY}
 
 
@@ -27,7 +27,9 @@ def get_order_status_data(order, user_id):
 	return wrap_with_id(serializer.data, user_id)
 
 def wrap_with_id(data, user_id):
-	return {'data': data,
+	result = {'data': {'order': data},
 		'to': user_id
 	}
+
+	return json.dumps(result)
 
