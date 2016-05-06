@@ -10,8 +10,8 @@ headers = {'Content-Type': 'application/json', 'Authorization': 'key='+AUTHKEY}
 def send_gcm(data):
 	r = requests.post(url, headers=headers, data=data)
 
-def order_status_gcm(data, user):
-	if not data or not user or user.id == order.customer.id:
+def order_status_gcm(order, user):
+	if not order or not user or user.id == order.customer.id:
 		return
 
 	user_id = user.gcm_token
