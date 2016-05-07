@@ -11,9 +11,6 @@ def send_gcm(data):
 	r = requests.post(url, headers=headers, data=data)
 
 def order_status_gcm(order, user):
-	if not order or not user or user.id == order.customer.id:
-		return
-
 	user_id = user.gcm_token
 	if user_id:
 		data = get_order_status_data(order, user_id)

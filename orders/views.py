@@ -44,7 +44,11 @@ class OrderStatus(APIView):
 
         if serializer.is_valid():
             order = serializer.save(updated_by=request.user)
-            order_status_gcm_task.delay(order, request.user)
+
+            order_status_gcm_task.delay(order, order.customer)
+            if order.status == Order.STATUS_CANCELLED and order.agent:
+                order_status_gcm_task.delay(order, order.agent)
+
             serializer = OrderSerializer(order)
             return Response(data=serializer.data)
         else:
