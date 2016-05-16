@@ -10,6 +10,11 @@ class IsAgent(permissions.BasePermission):
     def has_permission(self, request, view):
         return request.user.is_agent()
 
+class IsStaff(permissions.BasePermission):
+
+    def has_permission(self, request, view):
+        return request.user.is_staff
+
 class IsCreator(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
@@ -33,13 +38,14 @@ class CanUpdateStatus(permissions.BasePermission):
 
         return False
 
-class IsCustomerOrReadOnly(permissions.BasePermission):
+class IsStaffOrCustomerWriteOnly(permissions.BasePermission):
 
     def has_permission(self, request, view):
-    	if request.method in permissions.SAFE_METHODS:
+        if request.user.is_staff:
             return True
 
-        return request.user.is_customer()
+    	if request.method == 'POST':
+            return request.user.is_customer()
 
 class IsCreatorOrAssignedTo(permissions.BasePermission):
 

@@ -15,14 +15,21 @@ Including another URLconf
 """
 from django.conf.urls import url, include
 from django.contrib import admin
+from accounts import web_views
 
+
+# Web urls
 urlpatterns = [
+    url(r'^$', web_views.site_main, name='site-main'),
+    url(r'^web$', web_views.orders_portal, name='orders-portal'),
+]
+
+urlpatterns += [
     url(r'^admin/', admin.site.urls),
     url(r'^api-auth/', include('rest_framework.urls', namespace='rest_framework')),
 ]
 
 #API urls
-
 urlpatterns += [
     url(r'^users', include('accounts.urls')),
 	url(r'^orders', include('orders.urls')),

@@ -1,6 +1,7 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.contrib.auth import authenticate, login, logout
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -44,9 +45,19 @@ def getOtp(request, format=None):
 def login_user(request, format=None):
     otp = request.data.get('otp')
     phone = request.data.get('phone')
+    password = request.data.get('password')
+
+    if otp:
+        return login_otp(otp, phone)
+    elif password:
+        print 'GOT PASSWORD'
+        return login_password(password, phone, request)
+    else:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
 
     # TODO Validate the data
 
+def login_otp(otp, phone):
     if (UserOtp.objects.checkOtp(otp, phone)):
         user = User.objects.get(phone=phone)
         user.activate()
@@ -60,10 +71,40 @@ def login_user(request, format=None):
     else:
         return Response(data={"error": "Invalid OTP"}, status=status.HTTP_401_UNAUTHORIZED)
 
+def login_password(password, phone, request):
+    try:
+        user = User.objects.get(phone=phone)
+        user = authenticate(username=phone, password=password)
+
+        if user is None:
+            return Response(status=status.HTTP_401_UNAUTHORIZED)
+
+        if user.is_active:
+            login(request, user)
+            Token.objects.filter(user=user).delete()
+            token = Token.objects.create(user=user)
+            return Response(UserSerializer(user).data, status=status.HTTP_200_OK)
+    except User.DoesNotExist:
+        return Response(status=status.HTTP_404_NOT_FOUND)
+    except:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, ))
 def logout_user(request, format=None):
-    Token.objects.get(user=request.user).delete()
+
+    try:
+        Token.objects.get(user=request.user).delete()
+    except:
+        pass
+
+    try:
+        logout(request)
+    except:
+        pass
+
+    
     return Response()
 
 class UserMeDetail(APIView):

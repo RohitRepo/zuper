@@ -1,22 +1,31 @@
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
+from django.db.models import Q
 from django.conf import settings
+from django.core.paginator import Paginator, EmptyPage, PageNotAnInteger
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
+from rest_framework.pagination import PageNumberPagination
 
 from .models import Order
 from .serializers import OrderSerializer, OrderStatusSerializer, OrderCostSerializer
-from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent
-from .permissions import CanUpdateStatus, IsCustomerOrReadOnly, IsCreatorOrAssignedTo, IsAssignedTo
+from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent, IsStaff
+from .permissions import CanUpdateStatus, IsStaffOrCustomerWriteOnly, IsCreatorOrAssignedTo, IsAssignedTo
 
 from notifications.tasks import order_status_gcm_task
 
+def paginate_orders(request, orders):
+    paginator = PageNumberPagination()
+    result_page = paginator.paginate_queryset(orders, request)
+    serializer = OrderSerializer(result_page, many=True)
+    return paginator.get_paginated_response(serializer.data)
+
 class OrderList(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsCustomerOrReadOnly)
+    permission_classes = (permissions.IsAuthenticated, IsStaffOrCustomerWriteOnly)
 
     def post(self, request, format=None):
         serializer = OrderSerializer(data=request.data)
@@ -28,10 +37,13 @@ class OrderList(APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
     def get(self, request, format=None):
-        orders = Order.objects.filter(status=Order.STATUS_PENDING)
+        query = request.query_params.get('status')
+        if query:
+            orders = Order.objects.filter(status=query).order_by('-id')
+        else:
+            orders = Order.objects.all().order_by('-id')
 
-        serializer = OrderSerializer(orders, many=True)
-        return Response(data=serializer.data)
+        return paginate_orders(request, orders)
 
 
 class OrderStatus(APIView):
@@ -99,3 +111,26 @@ def update_cost(request, id, format=None):
         return Response(data=serializer.data)
     else:
         return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def pending_orders(request, format=None):
+    orders = request.user.orders.filter(status=Order.STATUS_PENDING).order_by('-id')
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def open_orders(request, format=None):
+    orders = Order.objects.exclude(status=Order.STATUS_CANCELLED).exclude(status=Order.STATUS_COMPLETED).order_by('-id')
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def closed_orders(request, format=None):
+    orders = Order.objects.filter(Q(status=Order.STATUS_CANCELLED) | Q(status=Order.STATUS_COMPLETED)).order_by('-id')
+    serializer = OrderSerializer(orders, many=True)
+    return Response(serializer.data)

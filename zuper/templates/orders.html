@@ -1,0 +1,81 @@
+{% extends "base.html" %}
+{% block html_attr_block %}ng-app="OrdersApp"{% endblock %}
+
+{% block title_block %}
+	<title>Orders Portal - ZuperFast</title>
+{%endblock%}
+
+{% block meta_block %}
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{%endblock%}
+
+{% block css_block %}
+	<!-- build:css /static/build/orders.css -->
+	<link rel="stylesheet" type="text/css" href="/static/css/orders/main.css">
+	<!-- endbuild -->
+{%endblock%}
+
+{% block body_attr_block %}ng-controller="ordersController"{% endblock %}
+
+
+{% block content_block %}
+	<md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>
+          <span>ZuperFast</span>
+        </h2>
+        <span flex></span>
+        <md-menu md-position-mode="target-right target">
+          <md-button class="md-icon-button" ng-click="openMenu($mdOpenMenu, $event)">
+            <md-icon md-menu-origin md-svg-src="/static/img/more.svg"></md-icon>
+          </md-button>
+          <md-menu-content width="4">
+            <md-menu-item>
+              <md-button ng-click="logout()">
+                Logout
+              </md-button>
+            </md-menu-item>
+          </md-menu-content>
+        </md-menu>
+      </div>
+    </md-toolbar>
+
+    <md-tabs md-dynamic-height md-border-bottom class="header-tabs">
+      <md-tab label="ALL" ng-click="listAll('All')"></md-tab>
+      <md-tab label="PENDING" ng-click="listAll('Pending')"></md-tab>
+      <md-tab label="OPEN" ng-click="listAll('Open')"></md-tab>
+      <md-tab label="CLOSED" ng-click="listAll('Closed')"></md-tab>
+    </md-tabs>
+    <md-progress-linear class="md-accent" ng-show="showprogress" md-mode="indeterminate"></md-progress-linear>
+
+    <div class="new-orders-holder">
+	    <md-button class="new-orders md-primary" ng-click="getNewOrders()" ng-show="showneworders" >Get New Orders</md-button>
+    </div>
+
+	<ul class="orders-list" ng-cloak ng-hide="showprogress">
+		<li ng-cloak ng-repeat="order in orders">
+			<md-whiteframe class="md-whiteframe-1dp order-container" layout="row" layout-align="space-between start" ng-click="showDetail(order	)">
+			    <!-- <section class="order" layout="row" layout-align="space-between start"> -->
+			    	<section class="order-head" flex="70">
+			    		<h4>[[order.id]]: [[order.description]]</h4>
+			    		<h5 ng-show="order.showDetail">[[setOrderType(order.order_type)]]</h5>
+			    		<h5 ng-show="order.estimate && order.showDetail">Estimate: [[order.estimate]]</h5>
+			    	</section>
+			    	<div class="order-status" flex="20" ng-style="{'background-color': setStatusColor(order.status)}"> [[ setStatus(order.status) ]] </div>
+			    <!-- </section> -->
+			</md-whiteframe>
+		</li>
+
+		<md-button class="load-more" ng-show="showloadmore" ng-click="loadMore()">Load More</md-button>
+	</ul>
+
+
+{% endblock %}
+
+{% block script_block %}
+	<!-- build:js /static/build/orders.js -->
+	<script type="text/javascript" src="/static/js/orders/orders.module.js"></script>
+	<script type="text/javascript" src="/static/js/orders/orders.controller.js"></script>
+	<!-- endbuild -->
+{% endblock %}

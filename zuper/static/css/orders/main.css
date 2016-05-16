@@ -1,0 +1,75 @@
+.header-tabs {
+	text-align: center;
+}
+
+md-tabs-canvas {
+	text-align: center;
+}
+
+md-pagination-wrapper {
+	margin: 0 auto;
+	right: 0;
+}
+
+.new-orders-holder {
+	width: 100%;
+	height: 40px;
+	position: relative;
+}
+
+.new-orders {
+	position: absolute;
+	left: 50%;
+	margin: 0 auto;
+	margin-left: -65px;
+}
+
+.orders-list {
+	width: 50%;
+	max-width: 400px;
+	margin: 8px auto;
+}
+
+.orders-list li {
+	width: 100%;
+	margin-bottom: 10px;
+}
+
+.orders-list li .order-container {
+	width: 100%;
+	/*min-height: 80px;*/
+	cursor: pointer;
+	padding-left: 8px;
+	padding-bottom: 8px;
+}
+
+.order-container .order-head {
+	padding-top: 8px;
+}
+
+.order-container .order-head h4 {
+	line-height: 1.5em;
+	font-size: 0.95em;
+}
+
+.order-container .order-head h5 { 
+	color: rgba(0, 0, 0, 0.51);
+	font-size: 0.8em;
+	line-height: 1.5em;
+}
+
+
+.order-container .order-status  {
+	color: white;
+	height: 100%;
+	padding: 8px;
+	border-radius: 1px;
+	text-align: center;
+}
+
+.load-more {
+	width: 100%;
+	padding: 0;
+	margin: 0;
+	margin-top: 8px;
+}

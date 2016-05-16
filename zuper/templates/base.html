@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html {% block html_attr_block %}{% endblock %}>
+<head>
+
+    {% block title_block %}{%endblock%}
+    {% block meta_block %}{%endblock%}
+
+    <meta name="fragment" content="!">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <link rel="shortcut icon" type="image/png" href="/static/images/favicon.ico">
+
+     <!-- build:css /static/build/base.css -->
+    <link rel='stylesheet' href='http://fonts.googleapis.com/css?family=Roboto:400,500,700,400italic'>
+    <link rel="stylesheet" href="/static/bower_components/angular-material/angular-material.css"/>
+    <link rel="stylesheet" type="text/css" href="/static/css/base.css">
+    <!-- endbuild -->
+
+    {% block css_block %}{% endblock %}
+
+</head>
+<body {% block body_attr_block %}{% endblock %}>
+
+    {% block content_block %}{% endblock %}
+
+
+
+    <!-- Scripts Here -->
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/2.1.3/jquery.min.js"></script>
+    <script src="/static/bower_components/angular/angular.js"></script>
+    <script src="/static/bower_components/angular-animate/angular-animate.js"></script>
+    <script src="/static/bower_components/angular-aria/angular-aria.js"></script>
+    <script type="text/javascript" src="/static/bower_components/angular-material/angular-material.js"></script>
+
+    <!-- build:js /static/build/base.js -->
+
+    <script type="text/javascript" src="/static/js/services/services.module.js"></script>
+    <script type="text/javascript" src="/static/js/services/auth.service.js"></script>
+
+    <script type="text/javascript" src="/static/js/models/models.module.js"></script>
+    <script type="text/javascript" src="/static/js/models/user.model.js"></script>
+    <script type="text/javascript" src="/static/js/models/order.model.js"></script>
+    
+    <script type="text/javascript" src="/static/js/root.module.js"></script>
+
+    <!-- endbuild -->
+
+    {% block script_block %}{% endblock %}
+</body>
+</html>

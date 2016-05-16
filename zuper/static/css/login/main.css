@@ -1,0 +1,32 @@
+.primary-header {
+	width: 100%;
+	padding-top: 10%;
+	text-align: center;
+}
+
+.primary-header h1 {
+	display: block;
+	line-height: 1.5em;
+	font-size: 3em;
+	font-weight: bold;
+}
+
+.primary-header h2 {
+	display: block;
+	font-size: 1.5em;
+	color: rgba(0, 0, 0, 0.51);
+}
+
+/* Login Form*/
+
+.auth {
+	width: 100%;
+}
+
+.auth form {
+	width: 40%;
+	max-width: 300px;
+	margin: 0 auto;
+	padding: 16px;
+	text-align: center;
+}

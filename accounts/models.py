@@ -26,6 +26,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     gcm_token = models.CharField(max_length=50, blank=True)
     latitude = models.CharField(max_length=15, blank=True)
     longitude = models.CharField(max_length=15, blank=True)
+    is_staff = models.BooleanField(default=False)
 
     objects = UserManager()
 

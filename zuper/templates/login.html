@@ -1,0 +1,62 @@
+{% extends "base.html" %}
+{% block html_attr_block %}ng-app="LoginApp"{% endblock %}
+
+{% block title_block %}
+	<title>Login - ZuperFast</title>
+{%endblock%}
+
+{% block meta_block %}
+    <base href="/login/">
+	<meta http-equiv="content-type" content="text/html; charset=utf-8">
+	<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+{%endblock%}
+
+{% block css_block %}
+	<!-- build:css /static/build/login.css -->
+	<link rel="stylesheet" type="text/css" href="/static/css/login/main.css">
+	<!-- endbuild -->
+{%endblock%}
+
+{% block body_attr_block %}ng-controller="loginController"{% endblock %}
+
+{% block site_header_block %}
+    <topbar></topbar>
+    <div class="curtain-overlay-placeholder"></div>
+{%endblock%}
+
+{% block content_block %}
+	<header class="primary-header">
+		<h1>Welcome to ZuperFast</h1>
+		<h2>Please login to continue.</h2>
+	</header>
+	<section class="auth clearfix">
+			<form name="loginForm" ng-keyup="$event.keyCode == 13 ? login(user) : null">
+
+				<md-input-container md-no-float class="md-block">
+					<label>Phone</label>
+				    <input ng-model="user.phone" type="text" name="uPhone" required ng-model-options="{ updateOn: 'blur' }" md-maxlength="10" minlength="10">
+				    <div ng-messages="loginForm.uPhone.$error">
+				        <div ng-message="required" ng-show="loginForm.uPhone.$error.required">This is required</div>
+				        <div ng-message="md-maxlength" ng-show="loginForm.uPhone.$error.maxlength">The phone number can be maximum of 10 characters long</div>
+				        <div ng-message="md-minlength" ng-show="loginForm.uPhone.$error.minlength">The phone number should be minimum of 10 characters long</div>
+		            </div>
+				</md-input-container>
+
+				<md-input-container md-no-float class="md-block">
+					<label>Password</label>
+				   	<input type="password" ng-model="user.password" name="uPassword" required >
+				    <div ng-messages="loginForm.uPassword.$error">
+				        <div ng-message="required" ng-show="loginForm.uPassword.$error.required">Please enter your password</div>
+		            </div>
+				</md-input-container>
+				<md-button class="md-raised md-primary" ng-class="{'disabled': loginForm.$invalid}" ng-disabled="loginForm.$invalid" ng-click="login(user)">LogIn</md-button>
+			</form>
+	</section>
+{% endblock %}
+
+{% block script_block %}
+	<!-- build:js /static/build/login.js -->
+	<script type="text/javascript" src="/static/js/login/login.module.js"></script>
+	<script type="text/javascript" src="/static/js/login/login.controller.js"></script>
+	<!-- endbuild -->
+{% endblock %}

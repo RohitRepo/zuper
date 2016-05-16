@@ -19,7 +19,7 @@ class UserManager(BaseUserManager):
         if not name:
             raise ValueError('User must have name.')
 
-        user = self.model(phone=phone, name=name, last_login=now, is_superuser=is_superuser, **extra_fields)
+        user = self.model(phone=phone, name=name, last_login=now, is_staff=is_staff, is_superuser=is_superuser, **extra_fields)
         user.set_password(password)
         user.save(using=self._db)
         return user
@@ -36,6 +36,9 @@ class UserManager(BaseUserManager):
          Creates and saves super user with given phone, name and password.
         '''
         return self.create_user_base(phone, name, password, True, True, **extra_fields)
+
+    def create_staffuser(self, phone, name, password, **extra_fields):
+        return self.create_user_base(phone, name, password, True, False, **extra_fields)
 
     def get_or_create_dummy(self, phone, user_type=None):
         if not phone:
