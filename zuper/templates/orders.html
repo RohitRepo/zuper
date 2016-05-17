@@ -53,7 +53,7 @@
 	    <md-button class="new-orders md-primary" ng-click="getNewOrders()" ng-show="showneworders" >Get New Orders</md-button>
     </div>
 
-	<ul class="orders-list" ng-cloak ng-hide="showprogress">
+	<ul class="orders-list" ng-cloak>
 		<li ng-cloak ng-repeat="order in orders">
 			<md-whiteframe class="md-whiteframe-1dp order-container" layout="row" layout-align="space-between start" ng-click="showDetail(order	)">
 			    <!-- <section class="order" layout="row" layout-align="space-between start"> -->
@@ -62,7 +62,7 @@
 			    		<h5 ng-show="order.showDetail">[[setOrderType(order.order_type)]]</h5>
 			    		<h5 ng-show="order.estimate && order.showDetail">Estimate: [[order.estimate]]</h5>
 			    	</section>
-			    	<div class="order-status" flex="20" ng-style="{'background-color': setStatusColor(order.status)}"> [[ setStatus(order.status) ]] </div>
+			    	<div class="order-status" flex="25" ng-style="{'background-color': setStatusColor(order.status)}"> [[ setStatus(order.status) ]] </div>
 			    <!-- </section> -->
 			</md-whiteframe>
 		</li>

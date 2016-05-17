@@ -116,21 +116,18 @@ def update_cost(request, id, format=None):
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def pending_orders(request, format=None):
-    orders = request.user.orders.filter(status=Order.STATUS_PENDING).order_by('-id')
-    serializer = OrderSerializer(orders, many=True)
-    return Response(serializer.data)
+    orders = Order.objects.filter(status=Order.STATUS_PENDING).order_by('-id')
+    return paginate_orders(request, orders)
 
 
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def open_orders(request, format=None):
-    orders = Order.objects.exclude(status=Order.STATUS_CANCELLED).exclude(status=Order.STATUS_COMPLETED).order_by('-id')
-    serializer = OrderSerializer(orders, many=True)
-    return Response(serializer.data)
+    orders = Order.objects.exclude(status=Order.STATUS_CANCELLED).exclude(status=Order.STATUS_PENDING).exclude(status=Order.STATUS_COMPLETED).order_by('-id')
+    return paginate_orders(request, orders)
 
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def closed_orders(request, format=None):
     orders = Order.objects.filter(Q(status=Order.STATUS_CANCELLED) | Q(status=Order.STATUS_COMPLETED)).order_by('-id')
-    serializer = OrderSerializer(orders, many=True)
-    return Response(serializer.data)
+    return paginate_orders(request, orders)
