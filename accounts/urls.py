@@ -11,7 +11,7 @@ urlpatterns = [
 	url(r'^/me$', views.UserMeDetail.as_view(), name='user-me'),
 	url(r'^/me/gcm$', views.UpdateGCMToken.as_view(), name='update-gcm-token'),
 	url(r'^/me/address', views.UserAddressList.as_view(), name='user-address'),
-	url(r'^/address/(?P<id>[0-9]+)', views.UserDetail.as_view(), name='user-detail'),
+	url(r'^/address/(?P<id>[0-9]+)', views.UserAddressDetail.as_view(), name='address-detail'),
 ]
 
 # Order Urls
