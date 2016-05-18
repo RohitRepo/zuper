@@ -10,6 +10,7 @@ urlpatterns = [
 	url(r'^/closed$', views.closed_orders, name="order-list-closed"),
 	url(r'^/pending$', views.pending_orders, name="order-list-pending"),
 	url(r'^/(?P<id>[0-9]+)$', views.OrderDetail.as_view(), name='order-detail'),
+	url(r'^/(?P<id>[0-9]+)/assign', views.assign_agent, name='order-assign'),
 	url(r'^/(?P<id>[0-9]+)/status', views.OrderStatus.as_view(), name='order-status'),
 	url(r'^/(?P<id>[0-9]+)/pick', views.pick_order, name='order-pick'),
 	url(r'^/(?P<id>[0-9]+)/unpick', views.pick_order, name='order-unpick'),

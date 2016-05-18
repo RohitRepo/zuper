@@ -50,7 +50,7 @@ angular.module("OrdersApp")
 		})
 	}
 
-	$interval(enquireNewOrders, 5*1000);
+	$interval(enquireNewOrders, 30*1000);
 
 	$scope.getNewOrders = function () {
 		$scope.orders = [];
@@ -136,4 +136,52 @@ angular.module("OrdersApp")
     $scope.logout = function () {
     	authService.logout();
     }
+
+	var getAgentDirections = function (order) { 
+ 	    // var url = "http://maps.googleapis.com/maps/api/directions/json?sensor=false&origin=" +
+ 	    // order.agent.latitude + "," + order.agent.longitude + "&destination=" + 
+ 	    // order.destination_lat + "," + order.destination_long;
+
+ 	    var url = "https://maps.googleapis.com/maps/api/directions/json?origin=Adelaide,SA&destination=Adelaide,SA&key=AIzaSyCK1V3YCn_Zb_2B8sGz1lXj72ETiqsrWuE";
+	    return url;
+	}
+
+    $scope.getLocationUrl = function (order) {
+    	 if (!order.agent) {
+	    	return "https://maps.google.com/maps?q=" + 
+	    	order.destination_lat +
+	    	"," + order.destination_long + 
+	    	"&hl=es;z=8&amp&output=embed";
+	    }
+
+	    return getAgentDirections(order);
+    };
+
+    var showAgentLoader = function (order) {
+    	order.showagentloader = true;
+    }
+
+    var hideAgentLoader = function (order) {
+    	order.showagentloader = false;
+    }
+
+    $scope.assignAgent = function (event, order, user_id) {
+    	showAgentLoader(order);
+    	event.stopPropagation();
+    	orderModel.assignAgent(order, user_id).then(function (updated_order) {
+    		hideAgentLoader(order);
+    		console.log('got response', updated_order);
+
+    		order = updated_order;
+
+    	}, function (error) {
+    		hideAgentLoader(order);
+    		console.log('got error', error);
+    	})
+    };
+
+}]).filter('trusted', ['$sce', function ($sce) {
+    return function(url) {
+        return $sce.trustAsResourceUrl(url);
+    };
 }]);

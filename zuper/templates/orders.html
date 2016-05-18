@@ -55,14 +55,31 @@
 
 	<ul class="orders-list" ng-cloak>
 		<li ng-cloak ng-repeat="order in orders">
-			<md-whiteframe class="md-whiteframe-1dp order-container" layout="row" layout-align="space-between start" ng-click="showDetail(order	)">
+			<md-whiteframe class="md-whiteframe-1dp order-container" layout="column" ng-click="showDetail(order	)">
+        <iframe 
+            class="order-map"
+            ng-cloak
+            ng-show="order.showDetail"
+            ng-src="[[getLocationUrl(order) | trusted]]"></iframe>
+
+          
 			    <!-- <section class="order" layout="row" layout-align="space-between start"> -->
+          <section class="order-mini" layout="row" layout-align="space-between start">
 			    	<section class="order-head" flex="70">
 			    		<h4>[[order.id]]: [[order.description]]</h4>
 			    		<h5 ng-show="order.showDetail">[[setOrderType(order.order_type)]]</h5>
 			    		<h5 ng-show="order.estimate && order.showDetail">Estimate: [[order.estimate]]</h5>
 			    	</section>
 			    	<div class="order-status" flex="25" ng-style="{'background-color': setStatusColor(order.status)}"> [[ setStatus(order.status) ]] </div>
+          </section>
+
+          <section class="order-agent" ng-show="order.showDetail">
+            <md-button class="order-agent-assign md-accent" ng-cloak ng-hide="order.agent || order.showagentloader" ng-click="assignAgent($event, order, 5)">Assign Agent</md-button>
+            <md-progress-linear class="md-accent order-agent-assign-progress" ng-show="order.showagentloader" md-mode="indeterminate"></md-progress-linear>
+            <section class="order-agent-present" ng-cloak ng-show="order.agent">
+              [[order.agent.name]]
+            </section>
+          </section>
 			    <!-- </section> -->
 			</md-whiteframe>
 		</li>

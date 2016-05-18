@@ -25,8 +25,8 @@ md-pagination-wrapper {
 }
 
 .orders-list {
-	width: 50%;
-	max-width: 400px;
+	width: 70%;
+	max-width: 600px;
 	margin: 8px auto;
 }
 
@@ -39,6 +39,15 @@ md-pagination-wrapper {
 	width: 100%;
 	/*min-height: 80px;*/
 	cursor: pointer;
+}
+
+.orders-list li .order-container .order-map{
+	width: 100%;
+	height: 300px;
+}
+
+.orders-list li .order-container .order-mini {
+	width: 100%;
 	padding-left: 8px;
 	padding-bottom: 8px;
 }
@@ -63,8 +72,32 @@ md-pagination-wrapper {
 	color: white;
 	height: 100%;
 	padding: 8px;
+	font-size: 0.9em;
 	border-radius: 1px;
 	text-align: center;
+}
+
+
+.orders-list li .order-container .order-agent {
+	width: 100%;
+	min-height: 100px;
+	background-color: #e6e6e6;
+	position: relative;
+}
+
+.order-container .order-agent .order-agent-assign {
+	position: absolute;
+	top: 50%;
+	left: 50%;
+	margin-left: -50px;
+	margin-top: -20px;
+}
+
+.order-container .order-agent .order-agent-assign-progress {
+	position: absolute;
+	top: 0;
+	left: 0;
+	width: 100%;
 }
 
 .load-more {

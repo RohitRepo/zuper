@@ -30,3 +30,5 @@ def wrap_with_id(data, user_id):
 
 	return json.dumps(result)
 
+def request_agent(user, order):
+	order_status_gcm(order, user)

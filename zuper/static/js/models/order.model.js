@@ -39,6 +39,14 @@ angular.module("module.models")
         });
     };
 
+    service.assignAgent = function (order, user_id) {
+        return $http.post('/orders/' + order.id + '/assign', {'user_id': user_id}).then(function (response) {
+            return response.data;
+        }, function (error) {
+            return $q.reject(error);
+        });
+    };
+
     service.listOpen = function (page) {
         page = page || 1;
         return $http.get('/orders/open?page=' + page).then(function (response) {

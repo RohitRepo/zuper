@@ -1,3 +1,5 @@
+import time
+
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -16,7 +18,9 @@ from .serializers import OrderSerializer, OrderStatusSerializer, OrderCostSerial
 from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent, IsStaff
 from .permissions import CanUpdateStatus, IsStaffOrCustomerWriteOnly, IsCreatorOrAssignedTo, IsAssignedTo
 
+from accounts.models import User
 from notifications.tasks import order_status_gcm_task
+from notifications.gcm import request_agent
 
 def paginate_orders(request, orders):
     paginator = PageNumberPagination()
@@ -131,3 +135,26 @@ def open_orders(request, format=None):
 def closed_orders(request, format=None):
     orders = Order.objects.filter(Q(status=Order.STATUS_CANCELLED) | Q(status=Order.STATUS_COMPLETED)).order_by('-id')
     return paginate_orders(request, orders)
+
+@api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def assign_agent(request, id, format=None):
+    order = get_object_or_404(Order, id=id)
+    user_id = request.data.get('user_id')
+    if not user_id:
+        return Response(status=status.HTTP_400_BAD_REQUEST)
+
+    user = get_object_or_404(User, id=user_id)
+    request_agent(user, order)
+
+    count = 0
+    while(count < 60):
+        time.sleep(5)
+        order = get_object_or_404(Order, id=id)
+        if order.agent:
+            serializer = OrderSerializer(order)
+            return Response(data=serializer.data)
+
+        count += 5
+
+    return Response(status=status.HTTP_504_GATEWAY_TIMEOUT)
