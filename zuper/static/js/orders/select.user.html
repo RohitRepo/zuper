@@ -1,0 +1,14 @@
+<md-dialog aria-label="Available Agents"  ng-cloak>
+  <form>
+    <md-toolbar>
+      <div class="md-toolbar-tools">
+        <h2>Available Agents</h2>
+      </div>
+    </md-toolbar>
+    <md-dialog-content>
+      <div class="agents-list-agent" ng-repeat="agent in agents" ng-click="answer(agent)">
+        [[agent.name]]
+      </div>
+    </md-dialog-content>
+  </form>
+</md-dialog>
