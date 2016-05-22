@@ -3,7 +3,9 @@ angular.module("OrdersApp")
 	"authService",
 	'orderModel',
 	'$interval',
-	function ($scope, authService, orderModel, $interval) {
+	'$mdDialog',
+	'$mdMedia',
+	function ($scope, authService, orderModel, $interval, $mdDialog, $mdMedia) {
 	"use strict";
 
 	var nextPage, currentList;
@@ -171,11 +173,10 @@ angular.module("OrdersApp")
     var agentQuery;
     $scope.agentQueryCount = 0;
 
-    $scope.assignAgent = function (event, index, user_id) {
+    $scope.assignAgent = function (index, user_id) {
     	var order = $scope.orders[index];
     	showAgentLoader(order);
     	$scope.agentQueryCount = 0;
-    	event.stopPropagation();
     	orderModel.assignAgent(order, user_id).then(function () {
     		startAgentQuery(index)
     	}, function (error) {
@@ -209,9 +210,49 @@ angular.module("OrdersApp")
     	agentQuery = $interval(getOrder, 5000, 13, true, index);
     }
 
+    $scope.selectUser = function(ev, index) {
+    var useFullScreen = ($mdMedia('sm') || $mdMedia('xs'))  && $scope.customFullscreen;
+    $mdDialog.show({
+      controller: 'DialogController',
+      templateUrl: 'static/js/orders/select.user.html',
+      parent: angular.element(document.body),
+      targetEvent: ev,
+      clickOutsideToClose:true,
+      fullscreen: useFullScreen
+    })
+    .then(function(user) {
+      $scope.assignAgent(index, user.id)
+    }, function() {
+      console.log("No user selected");
+    });
+  };
+
 
 }]).filter('trusted', ['$sce', function ($sce) {
     return function(url) {
         return $sce.trustAsResourceUrl(url);
     };
-}]);
+}]).controller('DialogController', [
+	'$scope',
+	'$mdDialog',
+	'userModel',
+	function ($scope, $mdDialog, userModel) {
+
+		$scope.noAgents = false;
+		$scope.agents = [];
+
+		userModel.getActiveAgents().then(function (response) {
+			$scope.agents = response.data;
+			console.log('users', $scope.agents);
+		}, function () {
+			$scope.noAgents = true;
+		});
+
+	  $scope.cancel = function() {
+	    $mdDialog.cancel();
+	  };
+	  $scope.answer = function(user) {
+	    $mdDialog.hide(user);
+	  };
+	}
+]);

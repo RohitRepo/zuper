@@ -182,3 +182,16 @@ md-pagination-wrapper {
 	width: 30%;
 	margin-top: 8px;
 }
+
+
+/* Agents dialog*/
+.agents-list-agent {
+	min-height: 40px;
+	min-width: 100px;
+	cursor: pointer;
+	padding: 8px;
+}
+
+.agents-list-agent:hover {
+	background-color: #ffe6f0;
+}

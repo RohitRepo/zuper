@@ -15,6 +15,7 @@ from .permissions import HasAddress
 
 from orders.models import Order
 from orders.serializers import OrderSerializer
+from orders.permissions import IsStaff
 from notifications.sms import generate_otp
 from notifications.tasks import send_otp_task
 
@@ -244,3 +245,11 @@ class UpdateGCMToken(APIView):
         request.user.gcm_token = ''
         request.user.save()
         return Response()
+
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def active_agents(request, format=None):
+    users = User.objects.all()
+    serializer = UserSerializer(users, many=True)
+    return Response(serializer.data)

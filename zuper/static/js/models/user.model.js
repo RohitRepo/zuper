@@ -6,7 +6,7 @@ angular.module("module.models")
 	var service = {};
 
 	service.getUser = function (userId) {
-		$http.get(base_url+'/'+userId).success(function (response) {
+		return $http.get(base_url+'/'+userId).success(function (response) {
 			return response;
 		}).error(function (response) {
 			$log.error("Error fetching user: ", response);
@@ -46,6 +46,14 @@ angular.module("module.models")
 		})
 		.error(function (response) {
 			$log.error("Error loggin out: ", response);
+		});
+	};
+
+	service.getActiveAgents = function () {
+		return $http.get(base_url+'/active-agents').success(function (response) {
+			return response;
+		}).error(function (response) {
+			$log.error("Error fetching user: ", response);
 		});
 	};
 
