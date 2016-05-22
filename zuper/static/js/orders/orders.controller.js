@@ -8,6 +8,9 @@ angular.module("OrdersApp")
 
 	var nextPage, currentList;
 	var latestOrder = 1000000;
+	$scope.showprogressloadmore = false;
+	$scope.showprogress = false;
+	$scope.showloadmore = false;
 
 	$scope.typeOfLists = {'All': orderModel.listAll,
 	 'Open': orderModel.listOpen,
@@ -15,12 +18,12 @@ angular.module("OrdersApp")
 	 'Pending': orderModel.listPending
 	}
 
-	var showProgress = function () {
-		$scope.showprogress = true;
+	var showProgress = function (progressVar) {
+		$scope[progressVar] = true;
 	}
 
-	var hideProgress = function () {
-		$scope.showprogress = false;
+	var hideProgress = function (progressVar) {
+		$scope[progressVar] = false;
 	}
 
 	var showLoadMore = function () {
@@ -35,7 +38,6 @@ angular.module("OrdersApp")
 		var getter = $scope.typeOfLists[currentList];
 
 		getter().then(function (orders) {
-			console.log('getter response 1', orders);
 			if (orders.results && orders.results.length != 0) {
 				var latestOrdernResults = orders.results[0].id;
 			} else {
@@ -58,7 +60,11 @@ angular.module("OrdersApp")
 		$scope.showneworders = false;
 	}
 
-	$scope.listAll = function (listType, page) {
+	$scope.listAll = function (listType, progressVar, page) {
+		if (! page) {
+			hideLoadMore();
+		}
+		
 		if (currentList != listType) {
 			$scope.orders = [];
 		}
@@ -66,11 +72,9 @@ angular.module("OrdersApp")
 		currentList = listType;
 		var getter = $scope.typeOfLists[listType];
 
-		showProgress();
+		showProgress(progressVar);
 		getter(page).then(function (orders) {
-			console.log('getter response', orders);
 			if ($scope.orders && $scope.orders.length != 0) {
-				console.log("get here", $scope.orders);
 				$scope.orders.push.apply($scope.orders, orders.results);
 			} else {
 				$scope.orders = orders.results; 
@@ -84,21 +88,20 @@ angular.module("OrdersApp")
 			if (orders.next) {
 				showLoadMore();
 				nextPage = orders.next.slice(-1)
-				console.log('nextPage', nextPage);
 			} else {
 				hideLoadMore();
 			}
 
-			hideProgress();
+			hideProgress(progressVar);
 		}, function () {
-			hideProgress();
+			hideProgress(progressVar);
 		})
 	}
 
-	$scope.listAll('All');
+	$scope.listAll('All', "showprogress");
 
 	$scope.loadMore = function () {
-		$scope.listAll(currentList, nextPage);
+		$scope.listAll(currentList, "showprogressloadmore", nextPage);
 	}
 
 

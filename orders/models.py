@@ -58,3 +58,11 @@ class Order(BaseModel):
             return False
 
         return self.agent.id == user.id
+
+    def timesince_updated(self, now=None):
+        from django.utils.timesince import timesince as _
+        return _(self.updated, now)
+
+    def timesince_created(self, now=None):
+        from django.utils.timesince import timesince as _
+        return _(self.created, now)

@@ -80,29 +80,6 @@ ol, ul {
           outline: none;
 }
 
-::-webkit-scrollbar {
-    width: 15px;
-}
-
-::-webkit-scrollbar-track {
-    -webkit-box-shadow: none;
-}
-
-::-webkit-scrollbar-thumb {
-    background-color: black;
-    border: 5px solid white;
-}
-
-@media (max-width: 800px) {
-  ::-webkit-scrollbar {
-      width: 7px;
-  }
-
-  ::-webkit-scrollbar-thumb {
-      border: none;
-  }
-}
-
 /*::selection {
   background: #E6B800;
 }
@@ -119,7 +96,7 @@ a {
 /*============= Scroll Bar ===========*/
 
 body::-webkit-scrollbar {
-    width: 15px;
+    width: 8px;
     /*border: 1px solid rgba(0, 0, 0, 0.9);*/
 }
 
@@ -129,8 +106,8 @@ body::-webkit-scrollbar-track {
 }
 
 body::-webkit-scrollbar-thumb {
-    background-color: black;
-    border: 5px solid white;
+    background-color: #3F51B5;
+    border: 0;
 }
 
 @media (max-width: 800px) {
