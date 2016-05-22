@@ -90,7 +90,7 @@
               ng-src="[[getLocationUrl(order) | trusted]]"></iframe>
 
             <section class="order-agent" ng-show="true">
-              <md-button class="order-agent-assign md-accent md-raised" ng-cloak ng-hide="order.agent || order.showagentloader" ng-click="assignAgent($event, order, 5)">Assign Agent</md-button>
+              <md-button class="order-agent-assign md-accent md-raised" ng-cloak ng-hide="order.agent || order.showagentloader" ng-click="assignAgent($event, $index, 5)">Assign Agent</md-button>
               <md-progress-linear class="md-accent order-agent-assign-progress" ng-show="order.showagentloader" md-mode="indeterminate"></md-progress-linear>
               <section class="order-agent-present" ng-cloak ng-show="order.agent">
                 <h4>[[order.agent.name]]</h4>

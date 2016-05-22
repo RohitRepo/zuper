@@ -16,7 +16,7 @@ from rest_framework.pagination import PageNumberPagination
 from .models import Order
 from .serializers import OrderSerializer, OrderStatusSerializer, OrderCostSerializer
 from .permissions import IsCustomer, IsAgent, IsCreator, IsCreatorOrAgent, IsStaff
-from .permissions import CanUpdateStatus, IsStaffOrCustomerWriteOnly, IsCreatorOrAssignedTo, IsAssignedTo
+from .permissions import CanUpdateStatus, IsStaffOrCustomerWriteOnly, IsCreatorOrStaffOrAssignedTo, IsAssignedTo
 
 from accounts.models import User
 from notifications.tasks import order_status_gcm_task
@@ -71,7 +71,7 @@ class OrderStatus(APIView):
             return Response(data=serializer.errors, status=status.HTTP_400_BAD_REQUEST)
 
 class OrderDetail(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsCreatorOrAssignedTo)
+    permission_classes = (permissions.IsAuthenticated, IsCreatorOrStaffOrAssignedTo)
 
     def get(self, request, id, format=None):
         order = get_object_or_404(Order, id=id)
@@ -140,6 +140,13 @@ def closed_orders(request, format=None):
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def assign_agent(request, id, format=None):
     order = get_object_or_404(Order, id=id)
+
+    # TODO handle existing agent better
+    order.agent = None;
+    order.status = Order.STATUS_PENDING
+    order.updated_by = request.user
+    order.save()
+
     user_id = request.data.get('user_id')
     if not user_id:
         return Response(status=status.HTTP_400_BAD_REQUEST)
@@ -147,14 +154,14 @@ def assign_agent(request, id, format=None):
     user = get_object_or_404(User, id=user_id)
     request_agent(user, order)
 
-    count = 0
-    while(count < 60):
-        time.sleep(5)
-        order = get_object_or_404(Order, id=id)
-        if order.agent:
-            serializer = OrderSerializer(order)
-            return Response(data=serializer.data)
+    # count = 0
+    # while(count < 60):
+    #     time.sleep(5)
+    #     order = get_object_or_404(Order, id=id)
+    #     if order.agent:
+    #         serializer = OrderSerializer(order)
+    #         return Response(data=serializer.data)
 
-        count += 5
+    #     count += 5
 
-    return Response(status=status.HTTP_504_GATEWAY_TIMEOUT)
+    return Response()

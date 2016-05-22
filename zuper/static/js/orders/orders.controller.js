@@ -64,7 +64,7 @@ angular.module("OrdersApp")
 		if (! page) {
 			hideLoadMore();
 		}
-		
+
 		if (currentList != listType) {
 			$scope.orders = [];
 		}
@@ -168,20 +168,47 @@ angular.module("OrdersApp")
     	order.showagentloader = false;
     }
 
-    $scope.assignAgent = function (event, order, user_id) {
+    var agentQuery;
+    $scope.agentQueryCount = 0;
+
+    $scope.assignAgent = function (event, index, user_id) {
+    	var order = $scope.orders[index];
     	showAgentLoader(order);
+    	$scope.agentQueryCount = 0;
     	event.stopPropagation();
-    	orderModel.assignAgent(order, user_id).then(function (updated_order) {
-    		hideAgentLoader(order);
-    		console.log('got response', updated_order);
-
-    		order = updated_order;
-
+    	orderModel.assignAgent(order, user_id).then(function () {
+    		startAgentQuery(index)
     	}, function (error) {
     		hideAgentLoader(order);
-    		console.log('got error', error);
     	})
     };
+
+
+    var getOrder = function (index) {
+    	var order = $scope.orders[index];
+    	if ($scope.agentQueryCount == 12) {
+    		hideAgentLoader(order);
+    		return;
+    	}
+
+    	$scope.agentQueryCount =  $scope.agentQueryCount +1;
+
+    	orderModel.get(order.id).then(function (updatedOrder) {
+    		if (updatedOrder.agent){
+    			hideAgentLoader(order);
+    			if (agentQuery){
+	    			$interval.cancel(agentQuery);
+	    		}
+
+    			$scope.orders[index] = updatedOrder;
+    		}
+    	}, function () {});
+    }
+
+    var startAgentQuery = function (index) {
+    	agentQuery = $interval(getOrder, 5000, 13, true, index);
+    }
+
 
 }]).filter('trusted', ['$sce', function ($sce) {
     return function(url) {

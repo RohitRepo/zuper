@@ -47,11 +47,11 @@ class IsStaffOrCustomerWriteOnly(permissions.BasePermission):
     	if request.method == 'POST':
             return request.user.is_customer()
 
-class IsCreatorOrAssignedTo(permissions.BasePermission):
+class IsCreatorOrStaffOrAssignedTo(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
 
-        return obj.is_owner(request.user) or obj.is_assigned(request.user)
+        return obj.is_owner(request.user) or obj.is_assigned(request.user) or request.user.is_staff
 
 class IsAssignedTo(permissions.BasePermission):
 
