@@ -106,12 +106,19 @@ md-pagination-wrapper {
 	font-size: 0.9em;
 	border-radius: 1px;
 	text-align: center;
+	position: relative;
+}
+
+.order-container .order-status  .refresh-order {
+	vertical-align: middle;
+	cursor: pointer;
+	margin-top: 0;
 }
 
 .order-container .order-status h4 {
 	font-weight: bold;
 	font-size: 1.2em;
-	vertical-align: middle;
+	vertical-align: baseline;
 }
 
 .order-container .order-status .order-update {

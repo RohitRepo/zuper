@@ -62,7 +62,8 @@
   			<md-whiteframe class="md-whiteframe-1dp order-container" layout="column" ng-click="showDetail(order	)">
           
   			    <!-- <section class="order" layout="row" layout-align="space-between start"> -->
-            <section class="order-status" ng-style="{'background-color': setStatusColor(order.status)}" layout="row"> 
+            <section class="order-status" ng-style="{'background-color': setStatusColor(order.status)}" layout="row" layout-align="center"> 
+              <md-icon class="refresh-order" md-svg-src="/static/img/refresh.svg" ng-click="updateOrder($index)"></md-icon>
               <h4 flex>[[ setStatus(order.status) ]]</h4>
               <div layout="column" class="order-update" layout-align="space-around center">
                 <div flex>[[order.updated_by.name]]</div>

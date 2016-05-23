@@ -15,8 +15,8 @@ angular.module("module.models")
     };
     service.status = status;
 
-    var statusColor = {'PN': '#003366',
-        'AC': '#b32d00',
+    var statusColor = {'PN': '#e68a00',
+        'AC': '#003366',
         'PK': '#604020',
         'PR': '#664400',
         'DV': '#4d2600',
