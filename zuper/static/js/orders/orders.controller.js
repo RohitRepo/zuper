@@ -149,10 +149,10 @@ angular.module("OrdersApp")
 		
  	    var url = "https://maps.googleapis.com/maps/api/directions/json?origin=Adelaide,SA&destination=Adelaide,SA&key=AIzaSyCK1V3YCn_Zb_2B8sGz1lXj72ETiqsrWuE&output=embed";
  	    url = 'https://www.google.com/maps/embed/v1/directions?key=AIzaSyCK1V3YCn_Zb_2B8sGz1lXj72ETiqsrWuE&origin=' +
- 	     order.agent.latitude + 
+ 	     order.agent.latitude + ',' +
  	     order.agent.longitude +
  	     '&destination=' +
- 	     order.destination_lat +
+ 	     order.destination_lat + ',' +
  	     order.destination_long;
 	    return url;
 	}
