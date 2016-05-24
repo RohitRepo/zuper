@@ -26,23 +26,18 @@ def disconnect(message):
     print("DISCONNECTED")
 
 def subscribe_global():
-	pub_nub.subscribe(channels='agent', callback=callback, error=callback,
-                 connect=connect, reconnect=reconnect, disconnect=disconnect)
+	pub_nub.subscribe(channels='agent', callback=callback, error=callback, connect=connect, reconnect=reconnect, disconnect=disconnect)
 
 def update_agent_location(message, channel):
-	try:
-		agent_phone = channel[5:]
+	agent_id = message.get('agent')
 
-		if not agent_phone:
-			return
+	if not agent_id:
+		return
 
-		agent = User.objects.get(phone=agent_phone)
+	agent = User.objects.get(id=agent_id)
 
-		location_data = message.split(',')
-		latitude = location_data[0][4:]
-		longitude = location_data[1][5:]
+	latitude = message.get('latitude')
+	longitude = message.get('longitude')
 
-		agent.update_location(latitude, longitude)
+	agent.update_location(latitude, longitude)
 
-	except:
-		pass
