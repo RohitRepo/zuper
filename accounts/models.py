@@ -84,5 +84,5 @@ class UserAddress(BaseModel):
     user = models.ForeignKey(User, related_name="addresses")
     tag = models.CharField(max_length=20, blank=True)
     address = models.CharField(max_length=200)
-    latitude = models.CharField(max_length=15)
-    longitude = models.CharField(max_length=15)
+    latitude = models.CharField(max_length=30)
+    longitude = models.CharField(max_length=30)

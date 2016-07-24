@@ -36,11 +36,11 @@ class Order(BaseModel):
     estimate = models.IntegerField(blank=True, null=True)
 
     destination_desc = models.TextField()
-    destination_lat = models.CharField(max_length=10)
-    destination_long = models.CharField(max_length=10)
+    destination_lat = models.CharField(max_length=30)
+    destination_long = models.CharField(max_length=30)
     source_desc = models.TextField(blank=True)
-    source_lat = models.CharField(max_length=10, blank=True)
-    source_long = models.CharField(max_length=10, blank=True)
+    source_lat = models.CharField(max_length=30, blank=True)
+    source_long = models.CharField(max_length=30, blank=True)
 
     status = models.CharField(max_length=2, choices=STATUS_CHOICES, default=STATUS_PENDING)
     updated_by = models.ForeignKey(settings.AUTH_USER_MODEL, related_name="updates", blank=True, null=True)
@@ -66,3 +66,6 @@ class Order(BaseModel):
     def timesince_created(self, now=None):
         from django.utils.timesince import timesince as _
         return _(self.created, now)
+
+    def __str__(self):
+        return self.description
