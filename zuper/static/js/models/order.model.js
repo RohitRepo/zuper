@@ -65,18 +65,27 @@ angular.module("module.models")
         });
     };
 
-    service.listPending = function (page) {
+    service.listCancelled = function (page) {
         page = page || 1;
-        return $http.get('/orders/pending?page=' + page).then(function (response) {
+        return $http.get('/orders/cancelled?page=' + page).then(function (response) {
             return response.data;
         }, function (error) {
             return $q.reject(error);
         });
     };
 
-    service.listCancelled = function (artId) {
+    service.listCompleted = function (page) {
         page = page || 1;
-        return $http.get('/orders/' + artId + '/associates').then(function (response) {
+        return $http.get('/orders/completed?page=' + page).then(function (response) {
+            return response.data;
+        }, function (error) {
+            return $q.reject(error);
+        });
+    };
+
+    service.listPending = function (page) {
+        page = page || 1;
+        return $http.get('/orders/pending?page=' + page).then(function (response) {
             return response.data;
         }, function (error) {
             return $q.reject(error);

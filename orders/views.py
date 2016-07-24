@@ -160,6 +160,18 @@ def closed_orders(request, format=None):
     orders = Order.objects.filter(Q(status=Order.STATUS_CANCELLED) | Q(status=Order.STATUS_COMPLETED)).order_by('-id')
     return paginate_orders(request, orders)
 
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def cancelled_orders(request, format=None):
+    orders = Order.objects.filter(status=Order.STATUS_CANCELLED).order_by('-id')
+    return paginate_orders(request, orders)
+
+@api_view(['GET'])
+@permission_classes((permissions.IsAuthenticated, IsStaff))
+def completed_orders(request, format=None):
+    orders = Order.objects.filter(status=Order.STATUS_COMPLETED).order_by('-id')
+    return paginate_orders(request, orders)
+
 @api_view(['POST'])
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def assign_agent(request, id, format=None):

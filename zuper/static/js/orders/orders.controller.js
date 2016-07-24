@@ -17,6 +17,8 @@ angular.module("OrdersApp")
 	$scope.typeOfLists = {'All': orderModel.listAll,
 	 'Open': orderModel.listOpen,
 	 'Closed': orderModel.listClosed,
+	 'Cancelled': orderModel.listCancelled,
+	 'Completed': orderModel.listCompleted,
 	 'Pending': orderModel.listPending
 	}
 
