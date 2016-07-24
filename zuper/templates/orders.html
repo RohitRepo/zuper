@@ -65,6 +65,7 @@
           
   			    <!-- <section class="order" layout="row" layout-align="space-between start"> -->
             <section class="order-status" ng-style="{'background-color': setStatusColor(order.status)}" layout="row" layout-align="center"> 
+              <md-icon class="refresh-order" md-svg-src="/static/img/close.svg" ng-click="cancelOrder($index)"></md-icon>
               <md-icon class="refresh-order" md-svg-src="/static/img/refresh.svg" ng-click="updateOrder($index)"></md-icon>
               <h4 flex>[[ setStatus(order.status) ]]</h4>
               <div layout="column" class="order-update" layout-align="space-around center">

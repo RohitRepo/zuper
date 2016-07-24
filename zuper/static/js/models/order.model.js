@@ -65,6 +65,14 @@ angular.module("module.models")
         });
     };
 
+    service.cancelOrder = function (order) {
+        return $http.put('/orders/' + order.id + "/status", order).then(function (response) {
+            return response.data;
+        }, function (error) {
+            return $q.reject(error);
+        });
+    };
+
     service.listCancelled = function (page) {
         page = page || 1;
         return $http.get('/orders/cancelled?page=' + page).then(function (response) {

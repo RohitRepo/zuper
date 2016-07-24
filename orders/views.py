@@ -51,7 +51,7 @@ class OrderList(APIView):
 
 
 class OrderStatus(APIView):
-    permission_classes = (permissions.IsAuthenticated, IsCreatorOrAgent, CanUpdateStatus)
+    permission_classes = (permissions.IsAuthenticated,)
 
     def clean_agent_status(self, status, order):
         if status in [Order.STATUS_ACCEPTED, Order.STATUS_PICKED, Order.STATUS_PURCHASED, Order.STATUS_DELIVERY, Order.STATUS_COMPLETED]:
@@ -68,6 +68,12 @@ class OrderStatus(APIView):
 
         return None
 
+    def clean_staff_status(self, status, order):
+        if status == Order.STATUS_CANCELLED:
+            return status
+
+        return None
+
     def put(self, request, id, format=None):
         order = get_object_or_404(Order, id=id)
         self.check_object_permissions(request, order)
@@ -79,6 +85,8 @@ class OrderStatus(APIView):
                 order_status = self.clean_customer_status(request.data.get('status'), order)
             elif order.agent and order.agent.id == request.user.id:
                 order_status = self.clean_agent_status(request.data.get('status'), order)
+            elif request.user.is_staff:
+                order_status = self.clean_staff_status(request.data.get('status'), order)
 
             if not order_status:
                 return Response(status=status.HTTP_400_BAD_REQUEST)

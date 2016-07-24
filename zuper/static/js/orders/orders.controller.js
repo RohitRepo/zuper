@@ -201,6 +201,17 @@ angular.module("OrdersApp")
     	}, function () {});
     }
 
+    $scope.cancelOrder = function (index) {
+    	var order = $scope.orders[index];
+    	var old_status = order.status;
+    	order.status = "CN";
+    	orderModel.cancelOrder(order).then(function (response) {
+    		order = response;
+    	}, function () {
+    		order.status = old_status;
+    	} )
+    }
+
 
     var getOrder = function (index) {
     	var order = $scope.orders[index];
