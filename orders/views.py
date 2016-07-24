@@ -53,7 +53,7 @@ class OrderList(APIView):
 class OrderStatus(APIView):
     permission_classes = (permissions.IsAuthenticated, IsCreatorOrAgent, CanUpdateStatus)
 
-    def clean_agent_status(status, order):
+    def clean_agent_status(self, status, order):
         if status in [Order.STATUS_ACCEPTED, Order.STATUS_PICKED, Order.STATUS_PURCHASED, Order.STATUS_DELIVERY, STATUS_COMPLETED]:
             return status
         elif status == Order.STATUS_CANCELLED:
@@ -61,10 +61,10 @@ class OrderStatus(APIView):
 
         return None
 
-    def clean_customer_status(status, order):
+    def clean_customer_status(self, status, order):
         if status == Order.STATUS_CANCELLED:
             if order.status in [Order.STATUS_PENDING, Order.STATUS_ACCEPTED]:
-                return Order.STATUS_PENDING
+                return status
 
         return None
 
@@ -76,14 +76,14 @@ class OrderStatus(APIView):
         if serializer.is_valid():
 
             if request.user.id == order.customer.id:
-                status = clean_customer_status(serializer.data['status'])
+                order_status = self.clean_customer_status(request.data.get('status'), order)
             elif order.agent and order.agent.id == request.user.id:
-                status = clean_agent_status(serializer.data['status'])
+                order_status = self.clean_agent_status(request.data.get('status'), order)
 
-            if not status:
-                return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
+            if not order_status:
+                return Response(status=status.HTTP_400_BAD_REQUEST)
 
-            order = serializer.save(updated_by=request.user, status=status)
+            order = serializer.save(updated_by=request.user, status=order_status)
 
             order_status_gcm_task.delay(order, order.customer)
             if order.status == Order.STATUS_CANCELLED and order.agent:

@@ -31,12 +31,9 @@ class IsCreatorOrAgent(permissions.BasePermission):
 class CanUpdateStatus(permissions.BasePermission):
 
     def has_object_permission(self, request, view, obj):
-        if request.user.is_agent():
-        	return True
-        elif request.user.is_customer():
-        	return request.data.get('status') == 'CN'
+        
 
-        return False
+        return True
 
 class IsStaffOrCustomerWriteOnly(permissions.BasePermission):
 
