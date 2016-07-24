@@ -13,7 +13,7 @@ urlpatterns = [
 	url(r'^/(?P<id>[0-9]+)/assign', views.assign_agent, name='order-assign'),
 	url(r'^/(?P<id>[0-9]+)/status', views.OrderStatus.as_view(), name='order-status'),
 	url(r'^/(?P<id>[0-9]+)/pick', views.pick_order, name='order-pick'),
-	url(r'^/(?P<id>[0-9]+)/unpick', views.pick_order, name='order-unpick'),
+	url(r'^/(?P<id>[0-9]+)/unpick', views.unpick_order, name='order-unpick'),
 	url(r'^/(?P<id>[0-9]+)/cost', views.update_cost, name='order-cost'),
 ]
 

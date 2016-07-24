@@ -38,6 +38,10 @@ def getOtp(request, format=None):
     otp = '1234'
     # send_otp_task.delay(phone, otp)
     user = User.objects.get_or_create_dummy(phone, user_type)
+
+    if not (user.user_type == user_type):
+        return Response({"error": "Already registered in a different role"}, status=status.HTTP_400_BAD_REQUEST)
+
     UserOtp.objects.create_or_update(user = user, otp=otp)
     return Response() 
 
@@ -250,6 +254,6 @@ class UpdateGCMToken(APIView):
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def active_agents(request, format=None):
-    users = User.objects.filter(user_type=User.TYPE_AGENT)
+    users = User.objects.filter(user_type=User.TYPE_AGENT, is_active=True)
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)

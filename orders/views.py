@@ -53,13 +53,37 @@ class OrderList(APIView):
 class OrderStatus(APIView):
     permission_classes = (permissions.IsAuthenticated, IsCreatorOrAgent, CanUpdateStatus)
 
+    def clean_agent_status(status, order):
+        if status in [Order.STATUS_ACCEPTED, Order.STATUS_PICKED, Order.STATUS_PURCHASED, Order.STATUS_DELIVERY, STATUS_COMPLETED]:
+            return status
+        elif status == Order.STATUS_CANCELLED:
+            return Order.STATUS_PENDING
+
+        return None
+
+    def clean_customer_status(status, order):
+        if status == Order.STATUS_CANCELLED:
+            if order.status in [Order.STATUS_PENDING, Order.STATUS_ACCEPTED]:
+                return Order.STATUS_PENDING
+
+        return None
+
     def put(self, request, id, format=None):
         order = get_object_or_404(Order, id=id)
         self.check_object_permissions(request, order)
         serializer = OrderStatusSerializer(order, request.data)
 
         if serializer.is_valid():
-            order = serializer.save(updated_by=request.user)
+
+            if request.user.id == order.customer.id:
+                status = clean_customer_status(serializer.data['status'])
+            elif order.agent and order.agent.id == request.user.id:
+                status = clean_agent_status(serializer.data['status'])
+
+            if not status:
+                return Response({"error": "Invalid status"}, status=status.HTTP_400_BAD_REQUEST)
+
+            order = serializer.save(updated_by=request.user, status=status)
 
             order_status_gcm_task.delay(order, order.customer)
             if order.status == Order.STATUS_CANCELLED and order.agent:
