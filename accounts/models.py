@@ -48,7 +48,7 @@ class User(AbstractBaseUser, PermissionsMixin):
         #     send_welcome_mail.delay(self.id)
 
     def __unicode__(self):
-        return self.get_full_name()
+        return self.get_full_name() + ": " + str(self.phone)
 
     def get_full_name(self):
         return self.name
