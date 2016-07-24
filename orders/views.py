@@ -54,7 +54,7 @@ class OrderStatus(APIView):
     permission_classes = (permissions.IsAuthenticated, IsCreatorOrAgent, CanUpdateStatus)
 
     def clean_agent_status(self, status, order):
-        if status in [Order.STATUS_ACCEPTED, Order.STATUS_PICKED, Order.STATUS_PURCHASED, Order.STATUS_DELIVERY, STATUS_COMPLETED]:
+        if status in [Order.STATUS_ACCEPTED, Order.STATUS_PICKED, Order.STATUS_PURCHASED, Order.STATUS_DELIVERY, Order.STATUS_COMPLETED]:
             return status
         elif status == Order.STATUS_CANCELLED:
             return Order.STATUS_PENDING
