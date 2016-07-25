@@ -2,6 +2,10 @@ body {
 	overflow-y: scroll; 
 }
 
+body.md-dialog-is-showing {
+    overflow: visible !important;
+}
+
 .header-tabs {
 	text-align: center;
 }

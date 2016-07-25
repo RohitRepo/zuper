@@ -251,7 +251,6 @@ angular.module("OrdersApp")
     .then(function(user) {
       $scope.assignAgent(index, user.id)
     }, function() {
-      console.log("No user selected");
     });
   };
 
@@ -271,7 +270,6 @@ angular.module("OrdersApp")
 
 		userModel.getActiveAgents().then(function (response) {
 			$scope.agents = response.data;
-			console.log('users', $scope.agents);
 		}, function () {
 			$scope.noAgents = true;
 		});

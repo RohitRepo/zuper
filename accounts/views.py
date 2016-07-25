@@ -254,6 +254,6 @@ class UpdateGCMToken(APIView):
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, IsStaff))
 def active_agents(request, format=None):
-    users = User.objects.filter(user_type=User.TYPE_AGENT, is_active=True)
+    users = User.objects.filter(user_type=User.TYPE_AGENT, is_active=True, is_online=True)
     serializer = UserSerializer(users, many=True)
     return Response(serializer.data)

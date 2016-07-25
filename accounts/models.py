@@ -27,6 +27,7 @@ class User(AbstractBaseUser, PermissionsMixin):
     latitude = models.CharField(max_length=15, blank=True)
     longitude = models.CharField(max_length=15, blank=True)
     is_staff = models.BooleanField(default=False)
+    is_online = models.BooleanField(default=False)
 
     objects = UserManager()
 
@@ -71,6 +72,10 @@ class User(AbstractBaseUser, PermissionsMixin):
     def update_location(self, latitude, longitude):
         self.latitude = latitude
         self.longitude = longitude
+        self.save()
+
+    def update_online(self, status):
+        self.is_online = status
         self.save()
 
 
