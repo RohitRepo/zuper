@@ -46,7 +46,7 @@ def update_agent_location(message, channel):
 
 # Agent presence
 def presence_callback(message, channel):
-	update_agent_status(message, channel)
+	update_agent_status(message)
 
 def listen_presence():
 	pub_nub.presence(channel="status_agents", callback=presence_callback, error=error, connect=connect, reconnect=reconnect, disconnect=disconnect)
