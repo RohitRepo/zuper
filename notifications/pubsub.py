@@ -46,9 +46,7 @@ def update_agent_location(message, channel):
 
 # Agent presence
 def presence_callback(message, channel):
-
-    if channel.startswith('agent'):
-    	update_agent_status(message, channel)
+	update_agent_status(message, channel)
 
 def listen_presence():
 	pub_nub.presence(channel="status_agents", callback=presence_callback, error=error, connect=connect, reconnect=reconnect, disconnect=disconnect)
@@ -60,7 +58,7 @@ def update_agent_status(message):
 		return
 
 	try:
-		agent = User.objects.get(id=agent_id)
+		agent = User.objects.get(phone=agent_id)
 	except:
 		return
 
