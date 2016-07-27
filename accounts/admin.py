@@ -70,6 +70,6 @@ class UserAdmin(admin.ModelAdmin):
 
     search_fields = ('phone', 'name')
 
-    actions = [export_as_csv_action("CSV Export", fields=['name','user_type', 'phone'])]
+    actions = [export_as_csv_action("CSV Export")]
 
 admin.site.register(User, UserAdmin)

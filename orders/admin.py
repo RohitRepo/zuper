@@ -33,13 +33,14 @@ def export_as_csv_action(description="Export selected objects as CSV file",
     return export_as_csv
 
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ('description', 'status', "customer", "order_type")
+    list_display = ('description', 'status', "customer", "order_type",
+        'agent', 'updated_by', 'estimate', 'cost_delivery', 'cost_purchase')
     list_filter = (
         ('status'),
         ("order_type")
     )
     search_fields = ('customer__phone', 'customer__name')
 
-    actions = [export_as_csv_action("CSV Export", fields=['description','status'])]
+    actions = [export_as_csv_action("CSV Export")]
 
 admin.site.register(Order, OrderAdmin)
