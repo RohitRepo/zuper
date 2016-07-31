@@ -34,8 +34,8 @@ def getOtp(request, format=None):
 
 
     # OTP generation logic
-    # otp = generate_otp()
-    otp = '1234'
+    otp = generate_otp()
+    # otp = '1234'
     # send_otp_task.delay(phone, otp)
     user = User.objects.get_or_create_dummy(phone, user_type)
 
