@@ -18,6 +18,7 @@ from orders.serializers import OrderSerializer
 from orders.permissions import IsStaff
 from notifications.sms import generate_otp
 from notifications.tasks import send_otp_task
+from notifications.sms import send_otp
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))
@@ -36,7 +37,7 @@ def getOtp(request, format=None):
     # OTP generation logic
     otp = generate_otp()
     # otp = '1234'
-    # send_otp_task.delay(phone, otp)
+    send_otp_task.delay(phone, otp)
     user = User.objects.get_or_create_dummy(phone, user_type)
 
     if not (user.user_type == user_type):
