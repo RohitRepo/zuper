@@ -10,6 +10,7 @@ from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
 from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
+from rest_framework.status import HTTP_404_NOT_FOUND, HTTP_503_SERVICE_UNAVAILABLE
 from rest_framework.views import APIView
 from rest_framework.pagination import PageNumberPagination
 
@@ -21,6 +22,7 @@ from .permissions import CanUpdateStatus, IsStaffOrCustomerWriteOnly, IsCreatorO
 from accounts.models import User
 from notifications.tasks import order_status_gcm_task
 from notifications.gcm import request_agent
+from notifications.email import send_email
 
 def paginate_orders(request, orders):
     paginator = PageNumberPagination()
@@ -186,7 +188,7 @@ def assign_agent(request, id, format=None):
     order = get_object_or_404(Order, id=id)
 
     # TODO handle existing agent better
-    order.agent = None;
+    order.agent = None
     order.status = Order.STATUS_PENDING
     order.updated_by = request.user
     order.save()
@@ -209,3 +211,25 @@ def assign_agent(request, id, format=None):
     #     count += 5
 
     return Response()
+
+@api_view(['POST'])
+@permission_classes((permissions.IsAuthenticated, IsCreator))
+def mail_order(request, id, format=None):
+    order = get_object_or_404(Order, id=id)
+    email = request.user.email
+
+    if email is None:
+        body = { 'message' : 'E-Mail id not saved'}
+        return Response(status=HTTP_404_NOT_FOUND, data=body)
+
+    subject = "Order Bill - " + str(order.id)
+    message = "Here is your order bill"
+    from_email = "orders@zuperfast.com"
+
+    email_status = send_email(email, from_email, subject, message)
+    if not email_status:
+        body = { 'message', 'Email service failed'}
+        return Response(status=HTTP_503_SERVICE_UNAVAILABLE, data=body)
+
+    body = { 'message' : 'Email sent to {0}'.format(email),}
+    return Response(data=body)
