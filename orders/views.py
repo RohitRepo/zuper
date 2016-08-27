@@ -1,3 +1,4 @@
+import os
 import time
 
 from django.core.exceptions import ObjectDoesNotExist
@@ -23,6 +24,10 @@ from accounts.models import User
 from notifications.tasks import order_status_gcm_task
 from notifications.gcm import request_agent
 from notifications.email import send_email
+
+
+folder_path = os.path.dirname(__file__)
+TEMPLATE_FOLDER = folder_path + "/../zuper/templates/"
 
 def paginate_orders(request, orders):
     paginator = PageNumberPagination()
@@ -230,8 +235,32 @@ def mail_order(request, id, format=None):
         return Response(status=HTTP_404_NOT_FOUND, data=body)
 
     subject = "Order Bill - " + str(order.id)
-    message = "Here is your order bill"
     from_email = "orders@zuperfast.com"
+
+    path = TEMPLATE_FOLDER + "order_email.html"
+    with open(path, 'r') as content_file:
+        message = content_file.read()
+
+    message = message.replace("$$order_id$$", str(order.id))
+    message = message.replace("$$order_date$$", order.updated.strftime('%m/%d/%Y'))
+
+    message = message.replace("$$user_name$$", request.user.name)
+    message = message.replace("$$user_phone$$", request.user.phone)
+    message = message.replace("$$user_email$$", request.user.email)
+
+    cost_purchase = 0
+    if order.cost_purchase is not None:
+        cost_purchase = order.cost_purchase
+
+    message = message.replace("$$order_message$$", order.description)
+    message = message.replace("$$purchase_cost$$", str(cost_purchase))
+    message = message.replace("$$delivery_cost$$", str(order.cost_delivery))
+
+    total_cost = order.cost_delivery
+    if order.cost_purchase is not None:
+        total_cost += order.cost_purchase
+
+    message = message.replace("$$total_cost$$", str(total_cost))
 
     email_status = send_email(email, from_email, subject, message)
     if not email_status:
