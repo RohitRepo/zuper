@@ -201,16 +201,26 @@ angular.module("OrdersApp")
     	}, function () {});
     }
 
-    $scope.cancelOrder = function (index) {
-    	var order = $scope.orders[index];
-    	var old_status = order.status;
-    	order.status = "CN";
-    	orderModel.cancelOrder(order).then(function (response) {
-    		order = response;
-    	}, function () {
-    		order.status = old_status;
-    	} )
-    }
+    $scope.cancelOrder = function(ev, index) {
+        // Appending dialog to document.body to cover sidenav in docs app
+        var confirm = $mdDialog.confirm()
+              .title('Are you sure? ')
+              .textContent('This order will be cancelled')
+              .ariaLabel('Cancel Confirmation')
+              .targetEvent(ev)
+              .ok('Cancel Order')
+              .cancel("Don't Cancel");
+        $mdDialog.show(confirm).then(function() {
+          var order = $scope.orders[index];
+          var old_status = order.status;
+          order.status = "CN";
+          orderModel.cancelOrder(order).then(function (response) {
+          	order = response;
+          }, function () {
+          	order.status = old_status;
+          } )
+        }, function() {});
+      };
 
 
     var getOrder = function (index) {

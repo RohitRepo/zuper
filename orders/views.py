@@ -78,6 +78,7 @@ class OrderStatus(APIView):
         order = get_object_or_404(Order, id=id)
         self.check_object_permissions(request, order)
         serializer = OrderStatusSerializer(order, request.data)
+        remove_agent = False
 
         if serializer.is_valid():
 
@@ -85,6 +86,8 @@ class OrderStatus(APIView):
                 order_status = self.clean_customer_status(request.data.get('status'), order)
             elif order.agent and order.agent.id == request.user.id:
                 order_status = self.clean_agent_status(request.data.get('status'), order)
+                if order_status == Order.STATUS_PENDING:
+                    remove_agent = True
             elif request.user.is_staff:
                 order_status = self.clean_staff_status(request.data.get('status'), order)
 
@@ -92,6 +95,10 @@ class OrderStatus(APIView):
                 return Response(status=status.HTTP_400_BAD_REQUEST)
 
             order = serializer.save(updated_by=request.user, status=order_status)
+
+            if remove_agent:
+                order.agent = None
+                order.save()
 
             order_status_gcm_task.delay(order, order.customer)
             if order.status == Order.STATUS_CANCELLED and order.agent:
