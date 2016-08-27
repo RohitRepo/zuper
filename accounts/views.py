@@ -18,6 +18,7 @@ from orders.serializers import OrderSerializer
 from orders.permissions import IsStaff
 from notifications.sms import generate_otp
 from notifications.tasks import send_otp_task
+from notifications.sms import send_otp
 
 @api_view(['POST'])
 @permission_classes((permissions.AllowAny,))

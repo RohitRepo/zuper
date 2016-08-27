@@ -17,6 +17,8 @@ urlpatterns = [
 	url(r'^/(?P<id>[0-9]+)/pick', views.pick_order, name='order-pick'),
 	url(r'^/(?P<id>[0-9]+)/unpick', views.unpick_order, name='order-unpick'),
 	url(r'^/(?P<id>[0-9]+)/cost', views.update_cost, name='order-cost'),
+
+    url(r'^/(?P<id>[0-9]+)/mail', views.mail_order, name='mail-order'),
 ]
 
 urlpatterns = format_suffix_patterns(urlpatterns)
