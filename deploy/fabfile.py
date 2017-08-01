@@ -12,6 +12,7 @@ def deploy():
     _get_latest_source(source_folder)
     _update_settings(source_folder, env.host)
     _update_virtualenv(source_folder)
+    _install_client(source_folder)
     _update_static_files(source_folder)
     _update_database(source_folder)
     _restart_service()
@@ -59,6 +60,10 @@ def _update_virtualenv(source_folder):
     run('%s/bin/pip install -r %s/deploy/requirements.txt' % (
         virtualenv_folder, source_folder))
 
+def _install_client(source_folder):
+    client_folder = source_folder + '/zuper/static'
+    run('cd %s && bower install' % (client_folder,))
+
 
 def _update_static_files(source_folder):
     run('cd %s && ../virtualenv/bin/python manage.py collectstatic --noinput' % (
@@ -68,6 +73,7 @@ def _update_static_files(source_folder):
 def _update_database(source_folder):
     run('cd %s && ../virtualenv/bin/python manage.py migrate --noinput' % (
         source_folder,))
+
 
 def _restart_service():
     run('sudo stop zuper')

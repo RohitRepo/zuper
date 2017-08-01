@@ -1,0 +1,21 @@
+{
+  "name": "filedmate",
+  "homepage": "https://github.com/RohitRepo/zuper",
+  "authors": [
+    "Rohit Kumar <rohit@magicpin.in>"
+  ],
+  "description": "",
+  "main": "",
+  "license": "MIT",
+  "ignore": [
+    "**/.*",
+    "node_modules",
+    "bower_components",
+    "test",
+    "tests"
+  ],
+  "dependencies": {
+    "angular": "^1.6.5",
+    "angular-material": "^1.1.4"
+  }
+}
