@@ -9,6 +9,7 @@ urlpatterns = [
 	url(r'^/login', views.login_user, name='auth-login'),
 	url(r'^/logout', views.logout_user, name='auth-logout'),
 	url(r'^/me$', views.UserMeDetail.as_view(), name='user-me'),
+	url(r'^/dump$', views.UserDumpView.as_view(), name='user-dump'),
 	url(r'^/me/gcm$', views.UpdateGCMToken.as_view(), name='update-gcm-token'),
 	url(r'^/me/address', views.UserAddressList.as_view(), name='user-address'),
 	url(r'^/address/(?P<id>[0-9]+)', views.UserAddressDetail.as_view(), name='address-detail'),

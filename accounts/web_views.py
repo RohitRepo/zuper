@@ -12,6 +12,5 @@ def site_main(request):
 
 @login_required
 def orders_portal(request):
-    print request.user
     context = RequestContext(request)
     return render_to_response("orders.html", context)

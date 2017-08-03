@@ -91,3 +91,6 @@ class UserAddress(BaseModel):
     address = models.CharField(max_length=200)
     latitude = models.CharField(max_length=30)
     longitude = models.CharField(max_length=30)
+
+class UserDump(BaseModel):
+    data = models.TextField(blank=True, null=True)
