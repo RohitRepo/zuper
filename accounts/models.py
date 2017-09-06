@@ -94,3 +94,6 @@ class UserAddress(BaseModel):
 
 class UserDump(BaseModel):
     data = models.TextField(blank=True, null=True)
+
+class UserDump1(BaseModel):
+    data = models.TextField(blank=True, null=True)
