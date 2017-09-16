@@ -9,7 +9,7 @@ from rest_framework import permissions, status
 from rest_framework.authtoken.models import Token
 from rest_framework.views import APIView
 
-from .models import User, UserOtp, UserAddress, UserDump, UserDump1
+from .models import User, UserOtp, UserAddress, UserDump, UserDump1, UserDump2
 from .serializers import UserSerializer, UserAddressSerializer, UserDumpSerializer
 from .permissions import HasAddress
 
@@ -242,6 +242,32 @@ class UserDumpView1(APIView):
             return Response(status=status.HTTP_400_BAD_REQUEST)
 
         data = UserDump1.objects.create(data=data)
+        return Response(UserDumpSerializer(data).data)
+
+class UserDumpView2(APIView):
+
+    def get(self, request, format=None):
+        start = request.GET.get('start', 0)
+        limit = request.GET.get('limit', 10)
+
+        try:
+            start = int(start)
+            limit = int(limit)
+        except Exception as e:
+            start = 0
+            limit = 10
+
+        data = UserDump2.objects.filter(id__gte=start, id__lte=start+limit)
+        serializer = UserDumpSerializer(data, many=True)
+
+        return Response(serializer.data)
+
+    def post(self, request, format=None):
+        data = request.data
+        if not data:
+            return Response(status=status.HTTP_400_BAD_REQUEST)
+
+        data = UserDump2.objects.create(data=data)
         return Response(UserDumpSerializer(data).data)
 
 

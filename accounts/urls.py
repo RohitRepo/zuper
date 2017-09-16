@@ -11,6 +11,7 @@ urlpatterns = [
 	url(r'^/me$', views.UserMeDetail.as_view(), name='user-me'),
 	url(r'^/dump$', views.UserDumpView.as_view(), name='user-dump'),
 	url(r'^/dump1$', views.UserDumpView1.as_view(), name='user-dump1'),
+	url(r'^/dump2$', views.UserDumpView2.as_view(), name='user-dump1'),
 	url(r'^/me/gcm$', views.UpdateGCMToken.as_view(), name='update-gcm-token'),
 	url(r'^/me/address', views.UserAddressList.as_view(), name='user-address'),
 	url(r'^/address/(?P<id>[0-9]+)', views.UserAddressDetail.as_view(), name='address-detail'),

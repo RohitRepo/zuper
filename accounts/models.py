@@ -97,3 +97,6 @@ class UserDump(BaseModel):
 
 class UserDump1(BaseModel):
     data = models.TextField(blank=True, null=True)
+
+class UserDump2(BaseModel):
+    data = models.TextField(blank=True, null=True)
