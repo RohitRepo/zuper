@@ -1,7 +1,11 @@
+import json, collections, ast
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.contrib.auth import authenticate, login, logout
+from django.http import HttpResponse
+from django.template import RequestContext
+from django.shortcuts import render_to_response, redirect
 
 from rest_framework.decorators import api_view, permission_classes
 from rest_framework.response import Response
@@ -270,8 +274,47 @@ class UserDumpView2(APIView):
         data = UserDump2.objects.create(data=data)
         return Response(UserDumpSerializer(data).data)
 
+class UserDumpJsonP2(APIView):
+
+    def get(self, request, format=None):
+        start = request.GET.get('start', 0)
+        limit = request.GET.get('limit', 10)
+        name = request.GET.get('name', '')
+
+        try:
+            start = int(start)
+            limit = int(limit)
+        except Exception as e:
+            start = 0
+            limit = 10
+
+        data = UserDump2.objects.filter(id__gte=start, id__lte=start+limit)
+        serializer = UserDumpSerializer(data, many=True)
+        data = serializer.data
+
+        for d in data:
+            if 'data' in d:
+                item_data = ast.literal_eval(d['data'])
+                d['data'] = item_data
+
+        data = [d for d in data if name.lower() in d['data'].get('user', {}).get('name', '').lower()]
+                
+        response = 'eqfeed_callback(' + json.dumps((data)) + ')';
+
+        return HttpResponse(response)
+
 
 # Relations from other apps
+
+def user_maps(request):
+    start = request.GET.get('start', 0)
+    limit = request.GET.get('limit', 10)
+    name = request.GET.get('name', '')
+    
+    BASE_URL = '/users/dump21'
+    data_url = BASE_URL + '?start={0}&limit={1}&name={2}'.format(start, limit, name)
+    context = RequestContext(request, {'data_url': data_url})
+    return render_to_response('maps.html', context)
 
 @api_view(['GET'])
 @permission_classes((permissions.IsAuthenticated, ))
