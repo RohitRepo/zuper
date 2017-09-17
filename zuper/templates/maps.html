@@ -21,7 +21,7 @@
       var map;
       function initMap() {
         map = new google.maps.Map(document.getElementById('map'), {
-          zoom: 2,
+          zoom: 9,
           center: new google.maps.LatLng(2.8,-187.3),
           mapTypeId: 'terrain'
         });
@@ -37,8 +37,9 @@
       // Loop through the results array and place a marker for each
       // set of coordinates.
       window.eqfeed_callback = function(results) {
-        for (var i = 0; i < results.length; i++) {
-        	console.log(results[i])
+        var bounds = new google.maps.LatLngBounds();
+        for (var i = results.length-1; i >=0 ; i--) {
+            console.log(data);
         	var data = results[i].data;
         	if (data) {
         		try{
@@ -49,9 +50,15 @@
 	        		  position: latLng,
 	        		  map: map
 	        		});
-	        	} catch (err) {}
+
+                    bounds.extend(latLng)
+	        	} catch (err) {
+                    console.error("Failed", data);
+
+                }
         	}
         }
+        map.fitBounds(bounds);
       }
     </script>
     <script async defer
