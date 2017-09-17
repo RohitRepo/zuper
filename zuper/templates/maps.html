@@ -42,8 +42,8 @@
         	var data = results[i].data;
         	if (data) {
         		try{
-	        		var latitude = data.user.location.latitude;
-	        		var longitude = data.user.location.longitude;
+	        		var latitude = data.location.latitude;
+	        		var longitude = data.location.longitude;
 	        		var latLng = new google.maps.LatLng(latitude,longitude);
 	        		var marker = new google.maps.Marker({
 	        		  position: latLng,
