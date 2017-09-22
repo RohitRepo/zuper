@@ -1,4 +1,5 @@
-import json, collections, ast
+import json, collections, ast, time
+from datetime import datetime
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -275,7 +276,6 @@ class UserDumpView2(APIView):
         return Response(UserDumpSerializer(data).data)
 
 class UserDumpJsonP2(APIView):
-
     def get(self, request, format=None):
         start = request.GET.get('start', 0)
         limit = request.GET.get('limit', 10)
@@ -303,6 +303,48 @@ class UserDumpJsonP2(APIView):
 
         return HttpResponse(response)
 
+def user_pings(request):
+    name = request.GET.get('name', '')
+    start = request.GET.get('start', '0')
+    end = request.GET.get('end', str(int(time.time()*1000)))
+    groupby = request.GET.get('groupby', 'day').lower() #value can be day/hour/min
+    print name
+    data = UserDump2.objects.filter()
+    serializer = UserDumpSerializer(data, many=True)
+    data = serializer.data
+    temp_data = {}
+    for d in data:
+        if 'data' in d:
+            item_data = ast.literal_eval(d['data'])
+            d['data'] = item_data
+    #data = [d for d in data if name.lower() in d['data'].get('user', {}).get('name', '').lower()]
+    for d in data:
+        try:
+            if (int(start) <= d['data'].get('location', {}).get('timestamp', 0) and int(end) >= d['data'].get('location', {}).get('timestamp', 0)):
+                if name.lower() in d['data'].get('user', {}).get('name', '').lower():
+                    dt = datetime.fromtimestamp(d['data'].get('location', {}).get('timestamp', 0)/1000)
+                    if(groupby == "day"):
+                        dt = dt.replace( hour=0, minute=0, second=0, microsecond=0)
+                    if(groupby == "hour"):
+                        dt = dt.replace( minute=0, second=0, microsecond=0)
+                    if(groupby == "min"):
+                        dt = dt.replace( second=0, microsecond=0)
+                    print str(dt)
+                    if(str(dt) in temp_data):
+                        temp_data[str(dt)] += 1
+                        #temp_data[str(dt)].append(d)
+                    else:
+                        temp_data[str(dt)] = 1
+                        #temp_data[str(dt)] = [d]
+        except Exception,e:
+            print e
+    g_data = [["Element", "Density", { "role": "style" } ]]
+    for k,v in temp_data.iteritems():
+        g_data.append([k, v, "#b87333"])
+    #response = 'ping_callback(' + json.dumps(temp_data) + ')'
+    context = RequestContext(request, {'g_data': g_data})
+    return render_to_response('bars.html', context)
+    
 
 # Relations from other apps
 

@@ -18,6 +18,7 @@ urlpatterns = [
 	url(r'^/me/address', views.UserAddressList.as_view(), name='user-address'),
 	url(r'^/address/(?P<id>[0-9]+)', views.UserAddressDetail.as_view(), name='address-detail'),
 	url(r'^/active-agents', views.active_agents, name='active-agents'),
+        url(r'^/pings$', views.user_pings, name = 'user_phone'),
 ]
 
 # Order Urls
