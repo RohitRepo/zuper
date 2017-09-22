@@ -7,7 +7,7 @@
     google.charts.setOnLoadCallback(drawChart);
     var g_data = {{ g_data | safe}};
     function drawChart() {
-        console.log("data", g_data);
+      //console.log("data", g_data);
       var data = google.visualization.arrayToDataTable(
           g_data
       );
@@ -27,10 +27,33 @@
       };
       var chart = new google.visualization.ColumnChart(document.getElementById("columnchart_values"));
       chart.draw(view, options);
+
+      //battery data
+      var b_data = {{ b_data | safe}};
+      var battery_data = google.visualization.arrayToDataTable(
+          b_data
+      );
+      var battery_view = new google.visualization.DataView(battery_data);
+      battery_view.setColumns([0, 1,
+                       { calc: "stringify",
+                         sourceColumn: 1,
+                         type: "string",
+                         role: "annotation" },
+                       2]);
+
+      var options = {
+        title: "Battery",
+        height: 400,
+        bar: {groupWidth: "95%"},
+        legend: { position: "none" },
+      };
+      var chart = new google.visualization.ColumnChart(document.getElementById("battery"));
+      chart.draw(battery_view, options);
   }
   </script>
   </head>
   <body>
-    <div id="columnchart_values" style="width: 900px; height: 300px;"></div>    
+    <div id="columnchart_values"></div> 
+    <div id="battery"></div>    
   </body>
   </html>

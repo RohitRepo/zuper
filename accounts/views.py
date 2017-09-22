@@ -313,6 +313,7 @@ def user_pings(request):
     serializer = UserDumpSerializer(data, many=True)
     data = serializer.data
     temp_data = {}
+    battery_data = {}
     for d in data:
         if 'data' in d:
             item_data = ast.literal_eval(d['data'])
@@ -329,7 +330,8 @@ def user_pings(request):
                         dt = dt.replace( minute=0, second=0, microsecond=0)
                     if(groupby == "min"):
                         dt = dt.replace( second=0, microsecond=0)
-                    print str(dt)
+                    print d['data']
+                    battery_data[str(dt)] = d['data']['battery']
                     if(str(dt) in temp_data):
                         temp_data[str(dt)] += 1
                         #temp_data[str(dt)].append(d)
@@ -341,8 +343,11 @@ def user_pings(request):
     g_data = [["Element", "Density", { "role": "style" } ]]
     for k,v in temp_data.iteritems():
         g_data.append([k, v, "#b87333"])
-    #response = 'ping_callback(' + json.dumps(temp_data) + ')'
-    context = RequestContext(request, {'g_data': g_data})
+
+    b_data = [["Element", "Density", { "role": "style" } ]]
+    for k,v in battery_data.iteritems():
+        b_data.append([k, v, "#b87333"])
+    context = RequestContext(request, {'g_data': g_data, 'b_data': b_data})
     return render_to_response('bars.html', context)
     
 
