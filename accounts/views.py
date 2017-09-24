@@ -1,5 +1,5 @@
 import json, collections, ast, time
-from datetime import datetime
+from datetime import datetime, timedelta
 from django.core.exceptions import ObjectDoesNotExist
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
@@ -305,7 +305,7 @@ class UserDumpJsonP2(APIView):
 
 def user_pings(request):
     name = request.GET.get('name', '')
-    start = request.GET.get('start', '0')
+    start = request.GET.get('start', '1505466395000')
     end = request.GET.get('end', str(int(time.time()*1000)))
     groupby = request.GET.get('groupby', 'day').lower() #value can be day/hour/min
     print name
@@ -330,8 +330,8 @@ def user_pings(request):
                         dt = dt.replace( minute=0, second=0, microsecond=0)
                     if(groupby == "min"):
                         dt = dt.replace( second=0, microsecond=0)
-                    print d['data']
                     battery_data[str(dt)] = d['data']['battery']
+
                     if(str(dt) in temp_data):
                         temp_data[str(dt)] += 1
                         #temp_data[str(dt)].append(d)
@@ -340,14 +340,43 @@ def user_pings(request):
                         #temp_data[str(dt)] = [d]
         except Exception,e:
             print e
-    g_data = [["Element", "Density", { "role": "style" } ]]
-    for k,v in temp_data.iteritems():
-        g_data.append([k, v, "#b87333"])
+    
+    g_data = [['Time', 'Pings']]
+    b_data = [['Time', 'Battery']]
+    if(groupby == "day"):
+        print "day"
+        start_date = datetime.fromtimestamp(int(start)/1000)
+        end_date = datetime.fromtimestamp(int(end)/1000)
+        delta = end_date - start_date
+        print delta.days
+        for i in range(delta.days + 1):
+            temp_date = (start_date+timedelta(i)).replace( hour=0, minute=0, second=0, microsecond=0)
+            print str(temp_date)
+            g_data.append([ str(temp_date.date()), temp_data.get(str(temp_date)) or 0 ])                           
+            b_data.append( [ str(temp_date.date()), battery_data.get(str(temp_date)) or 0 ])
+    if(groupby == "hour"):
+        print "hour"
+        start_date = datetime.fromtimestamp(int(start)/1000)
+        end_date = datetime.fromtimestamp(int(end)/1000)
+        td = (end_date - start_date)
+        delta = int(td.total_seconds()/3600)
+        for i in range(delta + 1):
+            temp_date = (start_date+timedelta(seconds=(3600 * i))).replace(minute=0, second=0, microsecond=0)
+            g_data.append([ str(temp_date.hour), temp_data.get(str(temp_date)) or 0 ])                           
+            b_data.append( [ str(temp_date.hour), battery_data.get(str(temp_date)) or 0 ])
+    if(groupby == "min"):
+        print "min"
+        start_date = datetime.fromtimestamp(int(start)/1000)
+        end_date = datetime.fromtimestamp(int(end)/1000)
+        td = (end_date - start_date)
+        delta = int(td.total_seconds()/60)
+        for i in range(delta + 1):
+            temp_date = (start_date+timedelta(seconds=(60 * i))).replace(second=0, microsecond=0)
+            g_data.append([ str(temp_date.minute), temp_data.get(str(temp_date)) or 0 ])                           
+            b_data.append( [ str(temp_date.minute), battery_data.get(str(temp_date)) or 0 ])
 
-    b_data = [["Element", "Density", { "role": "style" } ]]
-    for k,v in battery_data.iteritems():
-        b_data.append([k, v, "#b87333"])
-    context = RequestContext(request, {'g_data': g_data, 'b_data': b_data})
+
+    context = RequestContext(request, {'g_data': g_data , 'b_data': b_data})
     return render_to_response('bars.html', context)
     
 
